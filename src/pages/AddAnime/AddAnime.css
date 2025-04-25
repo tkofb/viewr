@@ -1,10 +1,56 @@
 .search {
   display: flex;
-  height: 60vh;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.search input {
+.search input,
+.search .anime {
   width: fit-content;
+  padding: 20px;
+  border-radius: 20px;
+  width: 700px;
+  font-size: 15px;
+}
+
+.inputAndHome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.search img {
+  width: 100%;
+  height: 100%;
+  max-width: 40px;
+}
+
+.anime {
+  display: flex;
+  gap: 20px;
+}
+
+.anime img {
+  width: 100%;
+  height: 100%;
+  max-width: 200px;
+  border-radius: 20px;
+}
+
+.text {
+
+}
+
+.details {
+  display: flex;
+  gap: 20px;
+
+  p {
+    border: black 2px solid;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+  }
 }
