@@ -1,0 +1,25 @@
+.card {
+  padding: 20px;
+  display: flex;
+  background-color: antiquewhite;
+  width: 200px;
+  height: 300px;
+  border: black 5px solid;
+  border-radius: 20px;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+}
+
+.animeHolder {
+  width: fit-content;
+  height: fit-content;
+  font-size: 75px;
+  font-weight: 600;
+  background-color: blueviolet;
+  padding: 15px 30px;
+  border: white 10px solid;
+  color: white;
+  border-radius: 50px;
+
+}
