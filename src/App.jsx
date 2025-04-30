@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home.jsx";
 import AddAnime from "./pages/AddAnime/AddAnime.jsx";
-// import movieInfo from "movie-info";
+import AnimePlayer from "./pages/AnimePlayer/AnimePlayer.jsx";
 
 export default function App() {
 
@@ -9,6 +9,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/anime" element={<AnimePlayer />} />
         <Route path="/addAnime" element={<AddAnime />} />
       </Routes>
     </BrowserRouter>

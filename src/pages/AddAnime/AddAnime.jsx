@@ -2,8 +2,17 @@ import React from "react";
 import { gql, useLazyQuery } from "@apollo/client";
 import "./AddAnime.css";
 import homeLogo from "../../assets/home.png";
+import { useNavigate } from "react-router-dom";
 
 const AddAnime = () => {
+  const navigate = useNavigate();
+
+  const playAnime = (animeName) => {
+    navigate("/anime", {
+      state: { animeName: animeName },
+    });
+  };
+
   const handleTextChange = (e) => {
     if (e.key === "Enter") {
       const searchTerm = e.target.value;
@@ -33,9 +42,29 @@ const AddAnime = () => {
     return desc;
   };
 
+  const onClick = (e) => {
+    console.log(e.currentTarget.id);
+    playAnime(e.currentTarget.id);
+  };
+
+  const handleMouseEnter = (e) => {
+    e.currentTarget.classList.add("active");
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.classList.remove("active");
+  };
+
   const listAnime = (anime) => {
     return (
-      <div key={anime.title.english} className="anime">
+      <div
+        key={anime.title.english}
+        id={anime.title.english}
+        className="anime"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={onClick}
+      >
         <img src={anime.coverImage.large} alt="anime cover" />
         <div className="text">
           <h2>{anime.title.english || anime.title.romaji}</h2>
@@ -48,11 +77,13 @@ const AddAnime = () => {
               {numToMonth(anime.startDate.month)} {anime.startDate.day},{" "}
               {anime.startDate.year}
             </p>
+            {anime.format === "TV" && <p>{anime.episodes} EP</p>}
           </div>
         </div>
       </div>
     );
   };
+
   const SEARCH_ANIME_LIST = gql`
     query ($search: String) {
       Page(perPage: 5) {
@@ -72,6 +103,7 @@ const AddAnime = () => {
           }
           description(asHtml: false)
           format
+          episodes
           duration
           startDate {
             year
@@ -103,19 +135,21 @@ const AddAnime = () => {
     useLazyQuery(SEARCH_ANIME_LIST);
 
   return (
-    <>
-      <div className="search">
-        <div className="inputAndHome">
-          <input type="text" onKeyDown={handleTextChange} />
-          <a href="/">
-            <img src={homeLogo} alt="Home Logo" />
-          </a>
-        </div>
-        {loading && <p>Loading...</p>}
-        {error && <p>Error: {error.message}</p>}
-        {data?.Page?.media.map((anime) => listAnime(anime))}
+    <div className="search">
+      <div className="inputAndHome">
+        <input type="text" onKeyDown={handleTextChange} />
+        <a href="/">
+          <img src={homeLogo} alt="Home Logo" />
+        </a>
       </div>
-    </>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error.message}</p>}
+      {data && (
+        <div className="animeList">
+          {data?.Page?.media.map((anime) => listAnime(anime))}
+        </div>
+      )}
+    </div>
   );
 };
 

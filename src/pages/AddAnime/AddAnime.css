@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
 
 .search input,
@@ -27,9 +28,16 @@
   max-width: 40px;
 }
 
+.anime.active {
+  background-color: antiquewhite;
+  cursor: pointer;
+  border: 3px solid black;
+}
+
 .anime {
   display: flex;
   gap: 20px;
+  border: 3px solid transparent;
 }
 
 .anime img {
@@ -37,10 +45,7 @@
   height: 100%;
   max-width: 200px;
   border-radius: 20px;
-}
-
-.text {
-
+  max-height: 280px;
 }
 
 .details {
@@ -54,3 +59,10 @@
     font-weight: 600;
   }
 }
+
+.animeList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
