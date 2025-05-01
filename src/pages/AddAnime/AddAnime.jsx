@@ -3,6 +3,7 @@ import { gql, useLazyQuery } from "@apollo/client";
 import "./AddAnime.css";
 import homeLogo from "../../assets/home.png";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddAnime = () => {
   const navigate = useNavigate();
@@ -13,10 +14,15 @@ const AddAnime = () => {
     });
   };
 
-  const handleTextChange = (e) => {
+  const handleTextChange = async (e) => {
     if (e.key === "Enter") {
-      const searchTerm = e.target.value;
-      if (searchTerm.trim()) {
+      const searchTerm = e.target.value.trim();
+      if (searchTerm) {
+        const response = await axios.post(`http://localhost:8080/searchMedia`, {
+          query: searchTerm,
+        });
+    
+        console.log(response.data);
         fetchAnime({ variables: { search: searchTerm } });
       }
     }
