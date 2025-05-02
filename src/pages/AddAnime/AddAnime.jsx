@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { gql, useLazyQuery } from "@apollo/client";
 import "./AddAnime.css";
 import homeLogo from "../../assets/home.png";
@@ -7,6 +7,7 @@ import axios from "axios";
 
 const AddAnime = () => {
   const navigate = useNavigate();
+  const [mediaList, setMediaList] = useState([]);
 
   const playAnime = (animeName) => {
     navigate("/anime", {
@@ -21,7 +22,8 @@ const AddAnime = () => {
         const response = await axios.post(`http://localhost:8080/searchMedia`, {
           query: searchTerm,
         });
-    
+
+        setMediaList(response.data);
         console.log(response.data);
         fetchAnime({ variables: { search: searchTerm } });
       }
@@ -49,7 +51,6 @@ const AddAnime = () => {
   };
 
   const onClick = (e) => {
-    console.log(e.currentTarget.id);
     playAnime(e.currentTarget.id);
   };
 
@@ -59,6 +60,51 @@ const AddAnime = () => {
 
   const handleMouseLeave = (e) => {
     e.currentTarget.classList.remove("active");
+  };
+
+  const handleDate = (date) => {
+    if (null) {
+      return null;
+    }
+
+    var options = {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    };
+    var datetime = new Date(date);
+
+    return datetime.toLocaleDateString("en-US", options);
+  };
+
+  const listMedia = (media) => {
+    return (
+      <div
+        id={media.name}
+        className="media"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={onClick}
+      >
+        <img
+          src={`https://image.tmdb.org/t/p/original/${
+            media.poster_path || media.backdrop_path
+          }`}
+          alt="media poster image"
+        />
+        <div className="text">
+          <h2>{media.title || media.name}</h2>
+          <p>{description(media.overview)}</p>
+          <div className="details">
+            <div className="mediaType">{media.media_type.toUpperCase()}</div>
+            <div className="voteAverage">{media.vote_average.toFixed(1)}</div>
+            <div className="releaseDate">
+              {handleDate(media.first_air_date || media.release_date)}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const listAnime = (anime) => {
@@ -152,6 +198,7 @@ const AddAnime = () => {
       {error && <p>Error: {error.message}</p>}
       {data && (
         <div className="animeList">
+          {mediaList.map((media) => listMedia(media))}
           {data?.Page?.media.map((anime) => listAnime(anime))}
         </div>
       )}

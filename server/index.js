@@ -40,6 +40,15 @@ app.post("/searchMedia", async (req, res) => {
     const response = await fetch(url, bearerOptions);
     let data = await response.json();
     data = data.results.filter((elem) => elem.media_type != 'person')
+
+    // I want to ignore glitched searches that happen in certain cases
+    data = data.filter((elem) => elem.release_date != "")
+    data = data.filter((elem) => elem.backdrop_path != null || elem.poster_path != null)
+    
+    const compare = (a, b) => {
+      return b.popularity  - a.popularity
+    }
+    data.sort(compare)
     res.send(data)
   } catch (err) {
     console.error(err);
