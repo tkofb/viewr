@@ -6,13 +6,12 @@ const Card = () => {
   let navigate = useNavigate()
 
   const routeChange = () =>{ 
-    let path = `addAnime`; 
-    navigate(path);
+    navigate('search');
   }
 
   return (
     <div className='card' onClick={routeChange}>
-      <div className="animeHolder">
+      <div className="mediaHolder">
         +
       </div>  
     </div>

@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { gql, useLazyQuery } from "@apollo/client";
-import "./AddAnime.css";
+import "./MediaSearch.css";
 import homeLogo from "../../assets/home.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const AddAnime = () => {
+const MediaSearch = () => {
   const navigate = useNavigate();
   const [mediaList, setMediaList] = useState([]);
 
-  const playAnime = (animeName) => {
-    navigate("/anime", {
-      state: { animeName: animeName },
+  const playMedia = (mediaId) => {
+    navigate("/play", {
+      state: { mediaId},
     });
   };
 
@@ -51,7 +50,7 @@ const AddAnime = () => {
   };
 
   const onClick = (e) => {
-    playAnime(e.currentTarget.id);
+    playMedia(e.currentTarget.id);
   };
 
   const handleMouseEnter = (e) => {
@@ -80,7 +79,7 @@ const AddAnime = () => {
   const listMedia = (media) => {
     return (
       <div
-        id={media.name}
+        id={media.id}
         className="media"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -107,85 +106,6 @@ const AddAnime = () => {
     );
   };
 
-  const listAnime = (anime) => {
-    return (
-      <div
-        key={anime.title.english}
-        id={anime.title.english}
-        className="anime"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={onClick}
-      >
-        <img src={anime.coverImage.large} alt="anime cover" />
-        <div className="text">
-          <h2>{anime.title.english || anime.title.romaji}</h2>
-          {/* Removes the div elements that are for some reason included as strings like <div> */}
-          <p>{description(anime.description.replace(/<\/?[^>]+(>|$)/g, ""))}</p>
-          <div className="details">
-            <p>{tvOrMovie(anime.format)}</p>
-            <p>{anime.duration}m</p>
-            <p>
-              {numToMonth(anime.startDate.month)} {anime.startDate.day},{" "}
-              {anime.startDate.year}
-            </p>
-            {anime.format === "TV" && <p>{anime.episodes} EP</p>}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const SEARCH_ANIME_LIST = gql`
-    query ($search: String) {
-      Page(perPage: 5) {
-        media(
-          search: $search
-          type: ANIME
-          isAdult: false
-          sort: [POPULARITY_DESC, SEARCH_MATCH]
-        ) {
-          id
-          title {
-            romaji
-            english
-          }
-          coverImage {
-            large
-          }
-          description(asHtml: false)
-          format
-          episodes
-          duration
-          startDate {
-            year
-            month
-            day
-          }
-          staff {
-            edges {
-              role
-              node {
-                id
-                name {
-                  full
-                  native
-                }
-                language
-                image {
-                  large
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const [fetchAnime, { loading, error, data }] =
-    useLazyQuery(SEARCH_ANIME_LIST);
-
   return (
     <div className="search">
       <div className="inputAndHome">
@@ -194,16 +114,11 @@ const AddAnime = () => {
           <img src={homeLogo} alt="Home Logo" />
         </a>
       </div>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
-      {data && (
-        <div className="animeList">
-          {mediaList.map((media) => listMedia(media))}
-          {data?.Page?.media.map((anime) => listAnime(anime))}
-        </div>
-      )}
+      <div className="mediaList">
+        {mediaList.map((media) => listMedia(media))}
+      </div>
     </div>
   );
 };
 
-export default AddAnime;
+export default MediaSearch;

@@ -29,19 +29,18 @@
   max-width: 40px;
 }
 
-.anime.active, .media.active {
+.media.active {
   background-color: antiquewhite;
   cursor: pointer;
   border: 3px solid black;
 }
 
-.anime, .media {
+.media {
   display: flex;
   gap: 20px;
   border: 3px solid transparent;
 }
 
-.anime img,
 .media img {
   width: 100%;
   height: 100%;
@@ -54,7 +53,7 @@
   display: flex;
   gap: 20px;
 
-  p, .mediaType, .voteAverage, .releaseDate {
+  .mediaType, .voteAverage, .releaseDate {
     border: black 2px solid;
     border-radius: 10px;
     padding: 10px;
@@ -62,7 +61,7 @@
   }
 }
 
-.animeList {
+.mediaList {
   display: flex;
   flex-direction: column;
   gap: 5px;
