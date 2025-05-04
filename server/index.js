@@ -27,7 +27,7 @@ const bearerOptions = {
 };
 
 app.listen(PORT, async () => {
-  console.log("server listening on port 8080");
+  console.log("Server Listening On Port 8080");
 });
 
 app.post("/searchMedia", async (req, res) => {

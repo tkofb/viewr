@@ -4,10 +4,10 @@ import { useLocation } from "react-router-dom";
 
 const MediaPlayer = () => {
   const location = useLocation();
-  const { mediaId } = location.state || {};
-  console.log(mediaId)
+  const { mediaInfo } = location.state || {};
+  console.log(mediaInfo)
 
-  return <div>MediaPlayer: {mediaId}</div>;
+  return <div>MediaPlayer:</div>;
 };
 
 export default MediaPlayer;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./MediaSearch.css";
 import homeLogo from "../../assets/home.png";
 import { useNavigate } from "react-router-dom";
@@ -7,10 +7,19 @@ import axios from "axios";
 const MediaSearch = () => {
   const navigate = useNavigate();
   const [mediaList, setMediaList] = useState([]);
+  const [mediaInfo, setMediaInfo] = useState(new Map());
+
+  useEffect(() => {
+    const newMap = new Map();
+    for (const media of mediaList) {
+      newMap.set(media.id.toString(), media);
+    }
+    setMediaInfo(newMap);
+  }, [mediaList]);
 
   const playMedia = (mediaId) => {
     navigate("/play", {
-      state: { mediaId},
+      state: { mediaInfo: mediaInfo.get(mediaId) },
     });
   };
 
@@ -23,22 +32,8 @@ const MediaSearch = () => {
         });
 
         setMediaList(response.data);
-        console.log(response.data);
-        fetchAnime({ variables: { search: searchTerm } });
       }
     }
-  };
-
-  const tvOrMovie = (str) => {
-    if (str === "MOVIE") {
-      return "Movie";
-    }
-
-    return str;
-  };
-
-  const numToMonth = (num) => {
-    return Intl.DateTimeFormat("en", { month: "short" }).format(new Date(num)); // January
   };
 
   const description = (desc) => {
