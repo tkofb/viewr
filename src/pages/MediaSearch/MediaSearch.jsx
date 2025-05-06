@@ -24,15 +24,13 @@ const MediaSearch = () => {
   };
 
   const handleTextChange = async (e) => {
-    if (e.key === "Enter") {
-      const searchTerm = e.target.value.trim();
-      if (searchTerm) {
-        const response = await axios.post(`http://localhost:8080/searchMedia`, {
-          query: searchTerm,
-        });
+    const searchTerm = e.target.value.trim();
+    if (searchTerm) {
+      const response = await axios.post(`http://localhost:8080/searchMedia`, {
+        query: searchTerm,
+      });
 
-        setMediaList(response.data);
-      }
+      setMediaList(response.data);
     }
   };
 

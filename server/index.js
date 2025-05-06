@@ -30,6 +30,37 @@ app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
 });
 
+app.post("/getMovieInfo", async (req, res) => {
+  try {
+    const mediaId = req.body.mediaId;
+    const url = `https://api.themoviedb.org/3/movie/${mediaId}?language=en-US&append_to_response=reviews,recommendations,similar`;
+
+    const response = await fetch(url, bearerOptions);
+    let data = await response.json();
+
+    res.send(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Failed to fetch media data" });
+  }
+});
+
+app.post("/getShowInfo", async (req, res) => {
+  try {
+    const mediaId = req.body.mediaId;
+    const url = `https://api.themoviedb.org/3/tv/${mediaId}?language=en-US&append_to_response=content_ratings,recommendations,similar`;
+
+    const response = await fetch(url, bearerOptions);
+    let data = await response.json();
+    console.log(data)
+
+    res.send(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Failed to fetch media data" });
+  }
+});
+
 app.post("/searchMedia", async (req, res) => {
   try {
     const query = req.body.query;
@@ -39,17 +70,19 @@ app.post("/searchMedia", async (req, res) => {
 
     const response = await fetch(url, bearerOptions);
     let data = await response.json();
-    data = data.results.filter((elem) => elem.media_type != 'person')
+    data = data.results.filter((elem) => elem.media_type != "person");
 
     // I want to ignore glitched searches that happen in certain cases
-    data = data.filter((elem) => elem.release_date != "")
-    data = data.filter((elem) => elem.backdrop_path != null || elem.poster_path != null)
-    
+    data = data.filter((elem) => elem.release_date != "");
+    data = data.filter(
+      (elem) => elem.backdrop_path != null || elem.poster_path != null
+    );
+
     const compare = (a, b) => {
-      return b.popularity  - a.popularity
-    }
-    data.sort(compare)
-    res.send(data)
+      return b.popularity - a.popularity;
+    };
+    data.sort(compare);
+    res.send(data);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Failed to fetch media data" });
