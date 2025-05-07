@@ -7,7 +7,6 @@ import PlayMovie from "../../components/PlayMovie/PlayMovie";
 const MediaPlayer = () => {
   const location = useLocation();
   const { mediaInfo } = location.state || {};
-  console.log(mediaInfo);
 
   return (
     <>

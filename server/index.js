@@ -48,11 +48,10 @@ app.post("/getMovieInfo", async (req, res) => {
 app.post("/getShowInfo", async (req, res) => {
   try {
     const mediaId = req.body.mediaId;
-    const url = `https://api.themoviedb.org/3/tv/${mediaId}?language=en-US&append_to_response=content_ratings,recommendations,similar`;
+    const url = `https://api.themoviedb.org/3/tv/${mediaId}?language=en-US&append_to_response=content_ratings,recommendations,similar,aggregate_credits`;
 
     const response = await fetch(url, bearerOptions);
     let data = await response.json();
-    console.log(data)
 
     res.send(data);
   } catch (err) {
