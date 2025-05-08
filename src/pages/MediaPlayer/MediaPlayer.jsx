@@ -7,10 +7,11 @@ import PlayMovie from "../../components/PlayMovie/PlayMovie";
 const MediaPlayer = () => {
   const location = useLocation();
   const { mediaInfo } = location.state || {};
+  console.log(mediaInfo);
 
   return (
     <>
-      {mediaInfo.media_type == "tv" ? (
+      {mediaInfo.name ? (
         <PlayShow mediaId={mediaInfo.id} />
       ) : (
         <PlayMovie mediaId={mediaInfo.id} />

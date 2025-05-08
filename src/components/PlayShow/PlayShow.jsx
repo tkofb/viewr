@@ -11,7 +11,6 @@ const PlayShow = ({ mediaId }) => {
       mediaId: mediaId,
     });
 
-    console.log(response.data)
     setMediaInfo(response.data);
   };
 
