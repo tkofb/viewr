@@ -87,16 +87,10 @@ const PlayShow = ({ mediaId }) => {
             </div>
           </div>
         </div>
-
-        <div className="recommendationsHolder">
-          <h2>Recommendations</h2>
-          <div className="recommendations">
-            <Recommendations
-              recommendations={mediaInfo.recommendations.results}
-              amt={5}
-            />
-          </div>
-        </div>
+        <Recommendations
+          recommendations={mediaInfo.recommendations.results}
+          amt={5}
+        />
       </div>
     )
   );

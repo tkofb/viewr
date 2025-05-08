@@ -18,9 +18,8 @@ const MediaSearch = () => {
   }, [mediaList]);
 
   const playMedia = (mediaId) => {
-    navigate("/play", {
-      state: { mediaInfo: mediaInfo.get(mediaId) },
-    });
+    const media_type = mediaInfo.get(mediaId).name ? 'tv' : 'movie'
+    navigate(`/play/${media_type}/${mediaId}`)
   };
 
   const handleTextChange = async (e) => {

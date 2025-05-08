@@ -9,6 +9,8 @@ const Recommendations = ({ recommendations, amt }) => {
   const [currRecInfo, setCurrRecInfo] = useState(new Map());
 
   useEffect(() => {
+    setMediaInfo(null);
+
     const handleIds = async () => {
       if (!recommendations || recommendations.length === 0) return;
 
@@ -28,21 +30,21 @@ const Recommendations = ({ recommendations, amt }) => {
   }, [recommendations]);
 
   useEffect(() => {
-    const newMap = new Map();
-    for (const media of mediaInfoList) {
-      newMap.set(media.id.toString(), media);
+    if (mediaInfoList) {
+      const newMap = new Map();
+      for (const media of mediaInfoList) {
+        newMap.set(media.id.toString(), media);
+      }
+      setCurrRecInfo(newMap);
     }
-    setCurrRecInfo(newMap);
   }, [mediaInfoList]);
 
   const playMedia = (mediaId) => {
-    navigate("/play", {
-      state: { mediaInfo: currRecInfo.get(mediaId) },
-    });
+    const media_type = currRecInfo.get(mediaId).name ? "tv" : "movie";
+    navigate(`/play/${media_type}/${mediaId}`);
   };
 
   const onClick = (e) => {
-    
     playMedia(e.currentTarget.id);
   };
 
@@ -88,8 +90,15 @@ const Recommendations = ({ recommendations, amt }) => {
   };
 
   return (
-    <div className="recommendations">
-      {mediaInfoList.slice(0, amt).map((rec) => handleRec(rec))}
+    <div className="recommendationsHolder">
+      {mediaInfoList != null && (
+        <>
+          <h2>Recommendations</h2>
+          <div className="recommendations">
+            {mediaInfoList.slice(0, amt).map((rec) => handleRec(rec))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

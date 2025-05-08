@@ -1,20 +1,18 @@
 import React from "react";
 import "./MediaPlayer.css";
 import PlayShow from "../../components/PlayShow/PlayShow";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PlayMovie from "../../components/PlayMovie/PlayMovie";
 
 const MediaPlayer = () => {
-  const location = useLocation();
-  const { mediaInfo } = location.state || {};
-  console.log(mediaInfo);
+  const { mediaId, mediaType } = useParams();
 
   return (
     <>
-      {mediaInfo.name ? (
-        <PlayShow mediaId={mediaInfo.id} />
+      {mediaType == "tv" ? (
+        <PlayShow mediaId={mediaId} />
       ) : (
-        <PlayMovie mediaId={mediaInfo.id} />
+        <PlayMovie mediaId={mediaId} />
       )}
     </>
   );
