@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import "./PlayShow.css";
 import axios from "axios";
 import Recommendations from "../Recommendations/Recommendations";
+import playIcon from "../../assets/play.svg";
+import favoriteIcon from "../../assets/favorite.svg";
+import favoriteIconHover from "../../assets/favorite_hover.svg";
 
 const PlayShow = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
@@ -25,6 +28,14 @@ const PlayShow = ({ mediaId }) => {
       .slice(0, -2);
   };
 
+  const hoverFavoriteEnter = (e) => {
+    e.currentTarget.src = favoriteIconHover
+  }
+
+  const hoverFavoriteLeave = (e) => {
+    e.currentTarget.src = favoriteIcon
+  }
+
   return (
     mediaInfo && (
       <div className="landingPage">
@@ -46,8 +57,17 @@ const PlayShow = ({ mediaId }) => {
 
           <div className="mediaInfoHolder">
             <div className="buttons">
-              <button className="watch">watch now</button>
-              <button className="addToFavorites">add to favorities</button>
+              <button className="watch">
+                <img src={playIcon} alt="play icon" /> Watch
+              </button>
+
+              <img
+                className="favoriteIcon"
+                src={favoriteIcon}
+                alt="favorite icon"
+                onMouseEnter={hoverFavoriteEnter}
+                onMouseLeave={hoverFavoriteLeave}
+              />
             </div>
             <div className="title">
               <strong>{mediaInfo.name}</strong>{" "}

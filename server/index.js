@@ -30,6 +30,19 @@ app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
 });
 
+app.get("/createSession", async (req, res) => {
+  try {
+    const tokenResponseURL = 'https://api.themoviedb.org/3/authentication/token/new';
+    const tokenResponse = await fetch(tokenResponseURL, bearerOptions)
+    const tokenData = await tokenResponse.json()
+
+    res.status(200).json(tokenData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: "Failed to create session" });
+  }
+});
+
 app.post("/getMovieInfo", async (req, res) => {
   try {
     const mediaId = req.body.mediaId;
@@ -38,7 +51,7 @@ app.post("/getMovieInfo", async (req, res) => {
     const response = await fetch(url, bearerOptions);
     let data = await response.json();
 
-    res.send(data);
+    res.status(200).send(data);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Failed to fetch media data" });
@@ -53,7 +66,7 @@ app.post("/getShowInfo", async (req, res) => {
     const response = await fetch(url, bearerOptions);
     let data = await response.json();
 
-    res.send(data);
+    res.status(200).send(data);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Failed to fetch media data" });

@@ -4,21 +4,23 @@
   align-items: center;
   flex-direction: column;
   gap: 20px;
-  height: 100vh;
   margin: 100px;
 }
 
 .mediaDisplay {
-  padding: 20px;
+  padding: 50px;
   display: flex;
-  gap: 20px;
+  gap: 50px;
   background-color: antiquewhite;
   border-radius: 20px;
-  width: 800px;
 
   img {
-    width: 200px;
+    width: 250px;
     border-radius: 20px;
+  }
+
+  .imgAndRatings {
+    align-self: center;
   }
 }
 
@@ -36,9 +38,10 @@
 
 .mediaInfoHolder {
   display: flex;
-  width: 100%;
+  max-width: 600px;
   flex-direction: column;
   gap: 20px;
+  align-self: center;
 
   .group {
     display: flex;
@@ -60,6 +63,15 @@
     justify-content: space-between;
     flex-direction: row;
 
+    img {
+      width: 20px;
+    }
+
+    .favoriteIcon {
+      width: 30px;
+      cursor: pointer;
+    }
+
     button {
       padding: 10px;
       border-radius: 10px;
@@ -69,16 +81,14 @@
     .watch {
       background-color: #007bff;
       color: white;
+      display: inline-flex;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      align-items: center;
     }
     .watch:hover {
       background-color: #2160bc;
     }
   }
-}
-
-.recommendationsHolder {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
 }

@@ -8,6 +8,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/approved" element={<Home />} />
         <Route path="/play/:mediaType/:mediaId" element={<MediaPlayer />} />
         <Route path="/search" element={<MediaSearch/>} />
       </Routes>

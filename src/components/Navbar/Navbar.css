@@ -1,0 +1,22 @@
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 100px;
+
+  button {
+    align-self: center;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: lightgray;
+  }
+
+  img {
+    max-width: 40px;
+  }
+}

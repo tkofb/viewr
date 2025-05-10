@@ -1,10 +1,20 @@
-import React from 'react'
-import Card from '../../components/Card/Card'
+import React from "react";
+import Card from "../../components/Card/Card";
+import Navbar from "../../components/Navbar/Navbar";
+import "./Home.css";
+import { useLocation } from "react-router-dom";
 
 const Home = () => {
-  return (
-    <Card />
-  )
-}
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
 
-export default Home
+
+  return (
+    <div className="home">
+      <Navbar />
+      <Card />
+    </div>
+  );
+};
+
+export default Home;
