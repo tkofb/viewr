@@ -30,8 +30,33 @@ app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
 });
 
+app.post("/getAccountInfo", async (req, res) => {
+  const url = `https://api.themoviedb.org/3/account?session_id=${req.body.sessionId}`
+  const response = await fetch(url, bearerOptions);
+  const data = await response.json();
+
+  res.send(data);
+});
+
+app.post("/logout", async (req, res) => {
+  const url = "https://api.themoviedb.org/3/authentication/session";
+  const options = {
+    method: "DELETE",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYmY0ZWI3NzAxMmZlMzAyNDFkNTI5MjllNzM2YzA5NyIsIm5iZiI6MTc0NTczNjU5NS4zNTksInN1YiI6IjY4MGRkMzkzZDgwZmRmODJhN2VhZGI2YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.d6KmPisJsyube6QyOu6rTpXXjiyg6YlOnYxk7UJJcZg",
+    },
+    body: JSON.stringify({ session_id: req.body.sessionId }),
+  };
+
+  const response = await fetch(url, options);
+  const data = await response.json();
+  res.send(data);
+});
+
 app.get("/createSession", async (req, res) => {
-  console.log(req.query.requestToken)
   const url = "https://api.themoviedb.org/3/authentication/session/new";
   const options = {
     method: "POST",

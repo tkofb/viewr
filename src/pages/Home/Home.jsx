@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../../components/Card/Card";
 import Navbar from "../../components/Navbar/Navbar";
 import "./Home.css";
@@ -8,21 +8,21 @@ import axios from "axios";
 const Home = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const [sessionId, setSessionId] = useState(localStorage.getItem('sessionId'))
 
   const createSession = async () => {
-    console.log(searchParams.get("request_token"));
-    console.log(
-      `http://localhost:8080/createSession?requestToken=${searchParams.get(
-        "request_token"
-      )}`
-    );
     const response = await axios.get(
       `http://localhost:8080/createSession?requestToken=${searchParams.get(
         "request_token"
       )}`
     );
-
-    console.log(response);
+    
+    const sessionCreated = response.data.success
+    if (sessionCreated) {
+      const currSessionId = response.data.session_id
+      localStorage.setItem("sessionId", currSessionId);
+      setSessionId(currSessionId)
+    }
   };
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <Navbar />
+      <Navbar sessionId={sessionId}/>
       <Card />
     </div>
   );
