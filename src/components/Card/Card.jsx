@@ -1,21 +1,61 @@
-import './Card.css'
-import React from 'react';
+import "./Card.css";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const Card = () => {
-  let navigate = useNavigate()
+const Card = ({ mediaInfo }) => {
+  let navigate = useNavigate();
 
-  const routeChange = () =>{ 
-    navigate('search');
-  }
+  const addMedia = () => {
+    navigate("search");
+  };
 
-  return (
-    <div className='card' onClick={routeChange}>
-      <div className="mediaHolder">
-        +
-      </div>  
-    </div>
-  )
-}
+  const playMedia = (mediaId, isTV) => {
+    const media_type = isTV ? "tv" : "movie";
+    navigate(`/play/${media_type}/${mediaId}`);
+  };
 
-export default Card
+  const onClick = (e) => {
+    playMedia(e.currentTarget.id, e.currentTarget.classList.contains("tv"));
+  };
+
+  const handleMediaInfo = (info) => {
+    return (
+      <div
+        className={`mediaCard ${info.title ? "movie" : "tv"}`}
+        id={info.id}
+        onClick={onClick}
+      >
+        <img
+          src={`https://image.tmdb.org/t/p/original/${
+            info.poster_path || info.backdrop_path
+          }`}
+          alt="media card info"
+        />
+
+        <div className="text">
+          <div className="title">{info.title || info.name}</div>
+          <div className="details">
+            <div className="year">
+              {info.title
+                ? info.release_date.substring(0, 4)
+                : info.first_air_date.substring(0, 4)}
+            </div>
+            <div className="mediaType">{info.name ? "TV" : "Movie"}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleEmptyCard = () => {
+    return (
+      <div className="emptyCard" onClick={addMedia}>
+        <div className="mediaHolder">+</div>
+      </div>
+    );
+  };
+
+  return mediaInfo ? handleMediaInfo(mediaInfo) : handleEmptyCard();
+};
+
+export default Card;

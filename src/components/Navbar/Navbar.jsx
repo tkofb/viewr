@@ -61,7 +61,6 @@ const Navbar = ({ sessionId }) => {
 
   const handleUserInfo = () => {
     const avatar_path = userInfo.avatar.tmdb.avatar_path;
-    // const avatar_path = null;
     const img_path = `https://image.tmdb.org/t/p/original/${avatar_path}`;
 
     if (avatar_path) {

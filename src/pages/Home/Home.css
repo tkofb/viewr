@@ -3,3 +3,8 @@
   gap: 20px;
   flex-direction: column;
 }
+
+.favorites {
+  display: flex;
+  gap: 20px;
+}

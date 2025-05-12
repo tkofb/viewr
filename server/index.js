@@ -30,6 +30,22 @@ app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
 });
 
+app.post('/getFavoriteMovies', async (req, res) => {
+  const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/movies?session_id=${req.body.sessionId}`
+  const response = await fetch(url, bearerOptions);
+  const data = await response.json();
+
+  res.send(data);
+})
+
+app.post('/getFavoriteTV', async (req, res) => {
+  const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/tv?session_id=${req.body.sessionId}`
+  const response = await fetch(url, bearerOptions);
+  const data = await response.json();
+
+  res.send(data);
+})
+
 app.post("/getAccountInfo", async (req, res) => {
   const url = `https://api.themoviedb.org/3/account?session_id=${req.body.sessionId}`
   const response = await fetch(url, bearerOptions);

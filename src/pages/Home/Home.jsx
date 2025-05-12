@@ -8,7 +8,9 @@ import axios from "axios";
 const Home = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const [sessionId, setSessionId] = useState(localStorage.getItem('sessionId'))
+  const [sessionId, setSessionId] = useState(localStorage.getItem("sessionId"));
+  const [favoriteMovies, setFavoriteMovies] = useState(null);
+  const [favoriteTV, setFavoriteTV] = useState(null);
 
   const createSession = async () => {
     const response = await axios.get(
@@ -16,12 +18,12 @@ const Home = () => {
         "request_token"
       )}`
     );
-    
-    const sessionCreated = response.data.success
+
+    const sessionCreated = response.data.success;
     if (sessionCreated) {
-      const currSessionId = response.data.session_id
+      const currSessionId = response.data.session_id;
       localStorage.setItem("sessionId", currSessionId);
-      setSessionId(currSessionId)
+      setSessionId(currSessionId);
     }
   };
 
@@ -31,10 +33,55 @@ const Home = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleFavorites = async () => {
+      const userInfo = await axios.post(
+        `http://localhost:8080/getAccountInfo`,
+        {
+          sessionId: sessionId,
+        }
+      );
+
+      const tvFavorites = await axios.post(
+        `http://localhost:8080/getFavoriteTV`,
+        {
+          sessionId: sessionId,
+          id: userInfo.data.id,
+        }
+      );
+      const movieFavorites = await axios.post(
+        `http://localhost:8080/getFavoriteMovies`,
+        {
+          sessionId: sessionId,
+          id: userInfo.data.id,
+        }
+      );
+
+      console.log(tvFavorites.data.results)
+      console.log(movieFavorites.data.results)
+      setFavoriteTV(tvFavorites.data.results);
+      setFavoriteMovies(movieFavorites.data.results);
+    };
+
+    handleFavorites();
+  }, [sessionId]);
+
   return (
     <div className="home">
-      <Navbar sessionId={sessionId}/>
-      <Card />
+      <Navbar sessionId={sessionId} />
+
+      <div className="favorites">
+        {favoriteMovies &&
+          favoriteMovies.map((elem) => {
+            return <Card mediaInfo={elem} />;
+          })}
+
+        {favoriteTV &&
+          favoriteTV.map((elem) => {
+            return <Card mediaInfo={elem} />;
+          })}
+        <Card />
+      </div>
     </div>
   );
 };
