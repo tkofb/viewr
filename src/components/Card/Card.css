@@ -24,6 +24,15 @@
   }
 }
 
+.emptyCard:hover {
+  background-color: bisque;
+
+  .mediaHolder {
+    background-color: violet;
+    border: salmon 10px solid;
+  }
+}
+
 
 .mediaCard {
   display: flex;
@@ -63,5 +72,5 @@
 }
 
 .mediaCard:hover{
-  background-color: azure;
+  background-color: bisque;
 }

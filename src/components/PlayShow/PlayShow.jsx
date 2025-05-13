@@ -3,16 +3,21 @@ import "./PlayShow.css";
 import axios from "axios";
 import Recommendations from "../Recommendations/Recommendations";
 import playIcon from "../../assets/play.svg";
+import notAFavoriteIcon from "../../assets/notAFavorite.svg";
 import favoriteIcon from "../../assets/favorite.svg";
-import favoriteIconHover from "../../assets/favorite_hover.svg";
 
 const PlayShow = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
+  const sessionId = localStorage.getItem("sessionId");
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const getShowInfo = async () => {
     const response = await axios.post(`http://localhost:8080/getShowInfo`, {
       mediaId: mediaId,
+      sessionId: sessionId,
     });
+
+    setIsFavorite(response.data.account_states.favorite);
 
     setMediaInfo(response.data);
   };
@@ -29,12 +34,39 @@ const PlayShow = ({ mediaId }) => {
   };
 
   const hoverFavoriteEnter = (e) => {
-    e.currentTarget.src = favoriteIconHover
-  }
+    e.currentTarget.src = favoriteIcon;
+  };
 
   const hoverFavoriteLeave = (e) => {
-    e.currentTarget.src = favoriteIcon
-  }
+    if (!isFavorite) {
+      e.currentTarget.src = notAFavoriteIcon;
+    }
+  };
+
+  const toggleFavoriteMedia = async (mediaId, mediaType) => {
+    const userInfo = await axios.post(`http://localhost:8080/getAccountInfo`, {
+      sessionId: sessionId,
+    });
+
+    const addToFavorites = await axios.post(
+      `http://localhost:8080/toggleFavoriteMedia`,
+      {
+        sessionId: sessionId,
+        mediaType: mediaType,
+        mediaId: mediaId,
+        userId: userInfo.data.id,
+        isFavorited: isFavorite,
+      }
+    );
+
+    if (addToFavorites.data.success) {
+      setIsFavorite(!isFavorite);
+    }
+  };
+
+  const onClick = (e) => {
+    toggleFavoriteMedia(mediaId, "tv");
+  };
 
   return (
     mediaInfo && (
@@ -63,10 +95,11 @@ const PlayShow = ({ mediaId }) => {
 
               <img
                 className="favoriteIcon"
-                src={favoriteIcon}
+                src={isFavorite ? favoriteIcon : notAFavoriteIcon}
                 alt="favorite icon"
                 onMouseEnter={hoverFavoriteEnter}
                 onMouseLeave={hoverFavoriteLeave}
+                onClick={onClick}
               />
             </div>
             <div className="title">
