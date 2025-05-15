@@ -17,10 +17,23 @@ const Recommendations = ({ recommendations, amt }) => {
       const mediaList = [];
 
       for (const rec of recommendations) {
-        const response = await axios.post("http://localhost:8080/getShowInfo", {
-          mediaId: rec.id,
-        });
-        mediaList.push(response.data);
+        if (rec.media_type == "movie") {
+          const response = await axios.post(
+            "http://localhost:8080/getMovieInfo",
+            {
+              mediaId: rec.id,
+            }
+          );
+          mediaList.push(response.data);
+        } else {
+          const response = await axios.post(
+            "http://localhost:8080/getShowInfo",
+            {
+              mediaId: rec.id,
+            }
+          );
+          mediaList.push(response.data);
+        }
       }
 
       setMediaInfo(mediaList);
@@ -49,8 +62,8 @@ const Recommendations = ({ recommendations, amt }) => {
   };
 
   const handleRec = (rec) => {
-    if (rec.media_type === "movie") {
-      return <div>{rec.name}</div>;
+    if (rec.title) {
+      return movieRecDisplay(rec);
     } else {
       return tvRecDisplay(rec);
     }
@@ -62,6 +75,31 @@ const Recommendations = ({ recommendations, amt }) => {
 
   const handleMouseLeave = (e) => {
     e.currentTarget.classList.remove("active");
+  };
+
+  const movieRecDisplay = (rec) => {
+    return (
+      <div
+        className="individualRecommendations"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={onClick}
+        id={rec.id}
+      >
+        <img
+          src={`https://image.tmdb.org/t/p/original/${
+            rec.poster_path || rec.backdrop_path
+          }`}
+          alt="media poster image"
+        />
+        <div className="title">{rec.title}</div>
+        <div className="details">
+          <div className="releaseDate">{rec.release_date.substring(0,4)}</div>
+          <div className="episodes">{rec.runtime}m</div>
+          <div className="mediaType">{rec.name ? "TV" : "MOVIE"}</div>
+        </div>
+      </div>
+    );
   };
 
   const tvRecDisplay = (rec) => {

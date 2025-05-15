@@ -11,18 +11,17 @@ const PlayShow = ({ mediaId }) => {
   const sessionId = localStorage.getItem("sessionId");
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const getShowInfo = async () => {
-    const response = await axios.post(`http://localhost:8080/getShowInfo`, {
-      mediaId: mediaId,
-      sessionId: sessionId,
-    });
-
-    setIsFavorite(response.data.account_states.favorite);
-
-    setMediaInfo(response.data);
-  };
-
   useEffect(() => {
+    const getShowInfo = async () => {
+      const response = await axios.post(`http://localhost:8080/getShowInfo`, {
+        mediaId: mediaId,
+        sessionId: sessionId,
+      });
+
+      setIsFavorite(response.data.account_states.favorite);
+      setMediaInfo(response.data);
+    };
+
     getShowInfo();
   }, [mediaId]);
 

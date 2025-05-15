@@ -8,9 +8,12 @@ import Navbar from "../../components/Navbar/Navbar";
 const MediaPlayer = () => {
   const { mediaId, mediaType } = useParams();
 
+  // Assume sessionId for login characteristics
+  const sessionId = localStorage.getItem('sessionId')
+
   return (
     <div className="mediaPlayerHolder">
-      <Navbar />
+      <Navbar sessionId={sessionId}/>
 
 
       {mediaType == "tv" ? (

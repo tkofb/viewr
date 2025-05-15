@@ -131,9 +131,8 @@ app.get("/approveSession", async (req, res) => {
 
 app.post("/getMovieInfo", async (req, res) => {
   try {
-    const mediaId = req.body.mediaId;
-    const url = `https://api.themoviedb.org/3/movie/${mediaId}?language=en-US&append_to_response=reviews,recommendations,similar`;
-
+    const {sessionId, mediaId} = req.body
+    const url = `https://api.themoviedb.org/3/movie/${mediaId}?session_id=${sessionId}&language=en-US&append_to_response=reviews,recommendations,credits,account_states,release_dates`;
     const response = await fetch(url, bearerOptions);
     let data = await response.json();
 
@@ -148,7 +147,7 @@ app.post("/getShowInfo", async (req, res) => {
   try {
     const mediaId = req.body.mediaId;
     const sessionId = req.body.sessionId;
-    const url = `https://api.themoviedb.org/3/tv/${mediaId}?session_id=${sessionId}&language=en-US&append_to_response=content_ratings,recommendations,similar,aggregate_credits,account_states`;
+    const url = `https://api.themoviedb.org/3/tv/${mediaId}?session_id=${sessionId}&language=en-US&append_to_response=content_ratings,recommendations,aggregate_credits,account_states`;
 
     const response = await fetch(url, bearerOptions);
     let data = await response.json();

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Navbar.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import alien from '../../../src/assets/alien.svg'
 
 const Navbar = ({ sessionId }) => {
   const navigate = useNavigate();
@@ -16,8 +17,6 @@ const Navbar = ({ sessionId }) => {
           sessionId: loggedIn,
         }
       );
-
-      console.log(userInfo.data);
       setUserInfo(userInfo.data);
     };
 
@@ -87,7 +86,7 @@ const Navbar = ({ sessionId }) => {
 
   return (
     <nav>
-      <img src="alien.svg" alt="logo" onClick={onAlienClick} />
+      <img src={alien} alt="logo" onClick={onAlienClick} />
       {loggedIn && userInfo ? (
         handleUserInfo()
       ) : (

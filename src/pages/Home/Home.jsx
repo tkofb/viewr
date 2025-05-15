@@ -57,8 +57,6 @@ const Home = () => {
         }
       );
 
-      console.log(tvFavorites.data.results)
-      console.log(movieFavorites.data.results)
       setFavoriteTV(tvFavorites.data.results);
       setFavoriteMovies(movieFavorites.data.results);
     };
