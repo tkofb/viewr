@@ -54,7 +54,7 @@ const Recommendations = ({ recommendations, amt }) => {
 
   const playMedia = (mediaId) => {
     const media_type = currRecInfo.get(mediaId).name ? "tv" : "movie";
-    navigate(`/play/${media_type}/${mediaId}`);
+    navigate(`/${media_type}/${mediaId}`);
   };
 
   const onClick = (e) => {

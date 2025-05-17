@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import "./PlayShow.css";
+import "./TVInfo.css";
 import axios from "axios";
 import Recommendations from "../Recommendations/Recommendations";
 import playIcon from "../../assets/play.svg";
 import notAFavoriteIcon from "../../assets/notAFavorite.svg";
 import favoriteIcon from "../../assets/favorite.svg";
 
-const PlayShow = ({ mediaId }) => {
+const TVInfo = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const sessionId = localStorage.getItem("sessionId");
   const [isFavorite, setIsFavorite] = useState(false);
@@ -148,4 +148,4 @@ const PlayShow = ({ mediaId }) => {
   );
 };
 
-export default PlayShow;
+export default TVInfo;

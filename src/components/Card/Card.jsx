@@ -11,7 +11,7 @@ const Card = ({ mediaInfo }) => {
 
   const playMedia = (mediaId, isTV) => {
     const media_type = isTV ? "tv" : "movie";
-    navigate(`/play/${media_type}/${mediaId}`);
+    navigate(`/${media_type}/${mediaId}`);
   };
 
   const onClick = (e) => {

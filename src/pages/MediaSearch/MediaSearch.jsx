@@ -19,7 +19,7 @@ const MediaSearch = () => {
 
   const playMedia = (mediaId) => {
     const media_type = mediaInfo.get(mediaId).name ? 'tv' : 'movie'
-    navigate(`/play/${media_type}/${mediaId}`)
+    navigate(`/${media_type}/${mediaId}`)
   };
 
   const handleTextChange = async (e) => {

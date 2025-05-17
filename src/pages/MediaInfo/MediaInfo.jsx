@@ -1,11 +1,11 @@
 import React from "react";
-import "./MediaPlayer.css";
-import PlayShow from "../../components/PlayShow/PlayShow";
+import "./MediaInfo.css";
 import { useParams } from "react-router-dom";
-import PlayMovie from "../../components/PlayMovie/PlayMovie";
 import Navbar from "../../components/Navbar/Navbar";
+import MovieInfo from "../../components/MovieInfo/MovieInfo";
+import TVInfo from "../../components/TVInfo/TVInfo";
 
-const MediaPlayer = () => {
+const MediaInfo = () => {
   const { mediaId, mediaType } = useParams();
 
   // Assume sessionId for login characteristics
@@ -17,12 +17,12 @@ const MediaPlayer = () => {
 
 
       {mediaType == "tv" ? (
-        <PlayShow mediaId={mediaId} />
+        <TVInfo mediaId={mediaId} />
       ) : (
-        <PlayMovie mediaId={mediaId} />
+        <MovieInfo mediaId={mediaId} />
       )}
     </div>
   );
 };
 
-export default MediaPlayer;
+export default MediaInfo;

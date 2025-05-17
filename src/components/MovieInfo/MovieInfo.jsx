@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import "./PlayMovie.css";
+import "./MovieInfo.css";
 import axios from "axios";
 import Recommendations from "../Recommendations/Recommendations";
 import playIcon from "../../assets/play.svg";
 import notAFavoriteIcon from "../../assets/notAFavorite.svg";
 import favoriteIcon from "../../assets/favorite.svg";
 
-const PlayMovie = ({ mediaId }) => {
+const MovieInfo = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const sessionId = localStorage.getItem("sessionId");
   const [isFavorite, setIsFavorite] = useState(false);
@@ -153,4 +153,4 @@ const PlayMovie = ({ mediaId }) => {
   );
 };
 
-export default PlayMovie;
+export default MovieInfo;
