@@ -1,5 +1,6 @@
 import express from "express";
 import "dotenv/config";
+import axios from "axios";
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use(function (req, res, next) {
 });
 
 const PORT = 8080;
+const apiKey = process.env.API_KEY;
 
 const bearerOptions = {
   method: "GET",
@@ -28,6 +30,12 @@ const bearerOptions = {
 
 app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
+});
+
+app.post("/getSeasonInfo", async (req, res) => {
+  const url = `https://api.themoviedb.org/3/tv/${req.body.mediaId}/season/${req.body.seasonNumber}?api_key=${apiKey}`;
+  const response = await axios.get(url);
+  res.send(response.data);
 });
 
 app.post("/toggleFavoriteMedia", async (req, res) => {
@@ -131,7 +139,7 @@ app.get("/approveSession", async (req, res) => {
 
 app.post("/getMovieInfo", async (req, res) => {
   try {
-    const {sessionId, mediaId} = req.body
+    const { sessionId, mediaId } = req.body;
     const url = `https://api.themoviedb.org/3/movie/${mediaId}?session_id=${sessionId}&language=en-US&append_to_response=reviews,recommendations,credits,account_states,release_dates`;
     const response = await fetch(url, bearerOptions);
     let data = await response.json();

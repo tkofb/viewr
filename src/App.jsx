@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home.jsx";
 import MediaSearch from "./pages/MediaSearch/MediaSearch.jsx";
 import MediaInfo from "./pages/MediaInfo/MediaInfo.jsx";
+import PlayMedia from "./pages/PlayMedia/PlayMedia.jsx";
 
 export default function App() {
   return (
@@ -10,7 +11,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/approved" element={<Home />} />
         <Route path="/:mediaType/:mediaId" element={<MediaInfo />} />
-        {/* <Route path="/play/:mediaType/:mediaId" element={<MediaInfo />} /> */}
+        <Route path="/play/:mediaType/:mediaId" element={<PlayMedia/>} />
         <Route path="/search" element={<MediaSearch/>} />
       </Routes>
     </BrowserRouter>

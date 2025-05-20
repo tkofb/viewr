@@ -1,0 +1,76 @@
+.seasonsHolder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.season {
+  position: relative;
+  height: 200px;
+  width: 130px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 8px;
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 20px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.season::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 0;
+  transition: background-color 0.3s ease;
+}
+
+.season:hover::before {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.season:hover {
+  transform: scale(1.05);
+}
+
+.season > * {
+  position: relative;
+  z-index: 1;
+}
+
+.episodeButtonsHolder {
+  display: flex;
+  gap: 16px;
+  max-width: 700px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.episodeButton {
+  background-color: aqua;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.episodeButton.active {
+  background-color: aquamarine;
+}
+
+.season.active {
+  transform: scale(1.05);
+}
+
+.season.active::before {
+  background-color: rgba(0, 0, 0, 0.2); /* Less dim on active */
+}
+
