@@ -39,100 +39,54 @@ app.post("/getSeasonInfo", async (req, res) => {
 });
 
 app.post("/toggleFavoriteMedia", async (req, res) => {
-  const url = `https://api.themoviedb.org/3/account/${req.body.userId}/favorite?session_id=${req.body.sessionId}`;
+  const url = `https://api.themoviedb.org/3/account/${req.body.userId}/favorite?api_key=${apiKey}&session_id=${req.body.sessionId}`;
   const body = {
     media_type: req.body.mediaType,
     media_id: req.body.mediaId,
     favorite: !req.body.isFavorited,
   };
-
-  const options = {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYmY0ZWI3NzAxMmZlMzAyNDFkNTI5MjllNzM2YzA5NyIsIm5iZiI6MTc0NTczNjU5NS4zNTksInN1YiI6IjY4MGRkMzkzZDgwZmRmODJhN2VhZGI2YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.d6KmPisJsyube6QyOu6rTpXXjiyg6YlOnYxk7UJJcZg",
-    },
-    body: JSON.stringify(body),
-  };
-
-  const response = await fetch(url, options);
-  const data = await response.json();
-
-  res.send(data);
+  const response = await axios.post(url, body);
+  res.send(response.data);
 });
 
 app.post("/getFavoriteMovies", async (req, res) => {
-  const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/movies?session_id=${req.body.sessionId}`;
-  const response = await fetch(url, bearerOptions);
-  const data = await response.json();
-
-  res.send(data);
+  const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/movies?api_key=${apiKey}&session_id=${req.body.sessionId}`;
+  const response = await axios.get(url);
+  res.send(response.data);
 });
 
 app.post("/getFavoriteTV", async (req, res) => {
-  const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/tv?session_id=${req.body.sessionId}`;
-  const response = await fetch(url, bearerOptions);
-  const data = await response.json();
-
-  res.send(data);
+  const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/tv?api_key=${apiKey}&session_id=${req.body.sessionId}`;
+  const response = await axios.get(url);
+  res.send(response.data);
 });
 
 app.post("/getAccountInfo", async (req, res) => {
-  const url = `https://api.themoviedb.org/3/account?session_id=${req.body.sessionId}`;
-  const response = await fetch(url, bearerOptions);
-  const data = await response.json();
-
-  res.send(data);
+  const url = `https://api.themoviedb.org/3/account?api_key=${apiKey}&session_id=${req.body.sessionId}`;
+  const response = await axios.get(url);
+  res.send(response.data);
 });
 
 app.post("/logout", async (req, res) => {
-  const url = "https://api.themoviedb.org/3/authentication/session";
-  const options = {
-    method: "DELETE",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYmY0ZWI3NzAxMmZlMzAyNDFkNTI5MjllNzM2YzA5NyIsIm5iZiI6MTc0NTczNjU5NS4zNTksInN1YiI6IjY4MGRkMzkzZDgwZmRmODJhN2VhZGI2YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.d6KmPisJsyube6QyOu6rTpXXjiyg6YlOnYxk7UJJcZg",
-    },
-    body: JSON.stringify({ session_id: req.body.sessionId }),
-  };
-
-  const response = await fetch(url, options);
-  const data = await response.json();
-  res.send(data);
+  const url = `https://api.themoviedb.org/3/authentication/session?api_key=${apiKey}`;
+  const body = { session_id: req.body.sessionId };
+  const response = await axios.delete(url, body);
+  res.send(response.data);
 });
 
 app.get("/createSession", async (req, res) => {
-  const url = "https://api.themoviedb.org/3/authentication/session/new";
-  const options = {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYmY0ZWI3NzAxMmZlMzAyNDFkNTI5MjllNzM2YzA5NyIsIm5iZiI6MTc0NTczNjU5NS4zNTksInN1YiI6IjY4MGRkMzkzZDgwZmRmODJhN2VhZGI2YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.d6KmPisJsyube6QyOu6rTpXXjiyg6YlOnYxk7UJJcZg",
-    },
-    body: JSON.stringify({ request_token: req.query.requestToken }),
-  };
-
-  const response = await fetch(url, options);
-  const data = await response.json();
-  res.status(200).send(data);
+  const url = `https://api.themoviedb.org/3/authentication/session/new?api_key=${apiKey}`;
+  const body = { request_token: req.query.requestToken };
+  const response = await axios.post(url, body);
+  res.send(response.data);
 });
 
 app.get("/approveSession", async (req, res) => {
   try {
-    const tokenResponseURL =
-      "https://api.themoviedb.org/3/authentication/token/new";
-    const tokenResponse = await fetch(tokenResponseURL, bearerOptions);
-    const tokenData = await tokenResponse.json();
-
-    res.status(200).json(tokenData);
+    const url = `https://api.themoviedb.org/3/authentication/token/new?api_key=${apiKey}`;
+    const response = await axios.get(url)
+    res.send(response.data);
   } catch (err) {
-    console.error(err);
     res.status(500).send({ error: "Failed to create session" });
   }
 });
@@ -140,11 +94,9 @@ app.get("/approveSession", async (req, res) => {
 app.post("/getMovieInfo", async (req, res) => {
   try {
     const { sessionId, mediaId } = req.body;
-    const url = `https://api.themoviedb.org/3/movie/${mediaId}?session_id=${sessionId}&language=en-US&append_to_response=reviews,recommendations,credits,account_states,release_dates`;
-    const response = await fetch(url, bearerOptions);
-    let data = await response.json();
-
-    res.status(200).send(data);
+    const url = `https://api.themoviedb.org/3/movie/${mediaId}?api_key=${apiKey}&session_id=${sessionId}&language=en-US&append_to_response=reviews,recommendations,credits,account_states,release_dates`;
+    const response = await axios.get(url)
+    res.send(response.data);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Failed to fetch media data" });
@@ -153,14 +105,10 @@ app.post("/getMovieInfo", async (req, res) => {
 
 app.post("/getShowInfo", async (req, res) => {
   try {
-    const mediaId = req.body.mediaId;
-    const sessionId = req.body.sessionId;
-    const url = `https://api.themoviedb.org/3/tv/${mediaId}?session_id=${sessionId}&language=en-US&append_to_response=content_ratings,recommendations,aggregate_credits,account_states`;
-
-    const response = await fetch(url, bearerOptions);
-    let data = await response.json();
-
-    res.status(200).send(data);
+    const { sessionId, mediaId } = req.body;
+    const url = `https://api.themoviedb.org/3/tv/${mediaId}?api_key=${apiKey}&session_id=${sessionId}&language=en-US&append_to_response=content_ratings,recommendations,aggregate_credits,account_states`;
+    const response = await axios.get(url)
+    res.send(response.data);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: "Failed to fetch media data" });
@@ -170,12 +118,12 @@ app.post("/getShowInfo", async (req, res) => {
 app.post("/searchMedia", async (req, res) => {
   try {
     const query = req.body.query;
-    const url = `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(
+    const url = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&query=${encodeURIComponent(
       query
     )}&include_adult=false&language=en-US&page=1`;
 
-    const response = await fetch(url, bearerOptions);
-    let data = await response.json();
+    const response = await axios.get(url)
+    let data = response.data
     data = data.results.filter((elem) => elem.media_type != "person");
 
     // I want to ignore glitched searches that happen in certain cases
@@ -188,6 +136,7 @@ app.post("/searchMedia", async (req, res) => {
       return b.popularity - a.popularity;
     };
     data.sort(compare);
+
     res.send(data);
   } catch (err) {
     console.error(err);

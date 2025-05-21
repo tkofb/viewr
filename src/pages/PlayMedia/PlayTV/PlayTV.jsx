@@ -6,7 +6,7 @@ const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const [seasonInfo, setSeasonInfo] = useState();
   const [currSeason, setCurrSeason] = useState(1);
-  const [currEpisode, setCurrEpisode] = useState(0);
+  const [currEpisode, setCurrEpisode] = useState(1);
 
   const sessionId = localStorage.getItem("sessionId");
 
@@ -61,7 +61,7 @@ const PlayTV = ({ mediaId }) => {
     if (match) {
       const newSeason = parseInt(match[0], 10);
       setCurrSeason(newSeason);
-      setCurrEpisode(0);
+      setCurrEpisode(1);
     }
   };
 
@@ -70,7 +70,7 @@ const PlayTV = ({ mediaId }) => {
 
     if (match) {
       const newEpisode = parseInt(match[0], 10);
-      setCurrEpisode(newEpisode - 1);
+      setCurrEpisode(newEpisode);
     }
   };
 
@@ -110,7 +110,7 @@ const PlayTV = ({ mediaId }) => {
     return (
       <div className="episodeButtonsHolder">
         {currSeasonInfo.map((elem) => {
-          const isActive = elem.episode_number - 1 === currEpisode;
+          const isActive = elem.episode_number === currEpisode;
 
           return (
             <button
@@ -128,7 +128,7 @@ const PlayTV = ({ mediaId }) => {
 
   const displayEpisodeInformation = () => {
     console.log(`Season: ${currSeason}, Episode ${currEpisode}`);
-    const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode];
+    const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode - 1];
     console.log(episodeInfo.name);
 
     return (
