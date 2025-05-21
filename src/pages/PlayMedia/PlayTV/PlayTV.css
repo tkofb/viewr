@@ -28,7 +28,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 0;
   transition: background-color 0.3s ease;
 }
@@ -72,5 +72,14 @@
 
 .season.active::before {
   background-color: rgba(0, 0, 0, 0.2); /* Less dim on active */
+}
+
+iframe {
+  border-radius: 20px;
+  padding: 10px;
+  height: 560px;
+  width: 1000px;
+  /* width: 100%; */
+  cursor: pointer;
 }
 

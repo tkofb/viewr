@@ -5,7 +5,7 @@ import "./PlayTV.css";
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const [seasonInfo, setSeasonInfo] = useState();
-  const [currSeason, setCurrSeason] = useState(0);
+  const [currSeason, setCurrSeason] = useState(1);
   const [currEpisode, setCurrEpisode] = useState(0);
 
   const sessionId = localStorage.getItem("sessionId");
@@ -35,11 +35,17 @@ const PlayTV = ({ mediaId }) => {
 
     const assignIndexToSeason = async () => {
       const seasonInfoList = [];
-      for (let i = 0; i < mediaInfo.number_of_seasons; i++) {
-        const seasonInfo = await getSeasonInfo(i);
-        seasonInfoList.push(seasonInfo);
+      for (let i = 0; i <= mediaInfo.number_of_seasons; i++) {
+        try {
+          const seasonInfo = await getSeasonInfo(i);
+          seasonInfoList.push(seasonInfo);
+        } catch {
+          console.log(`Season ${i} Not Found`);
+          seasonInfoList.push({ seasonNumber: i });
+        }
       }
       seasonInfoList.sort((a, b) => a.season_number - b.season_number);
+
       console.log(seasonInfoList);
       setSeasonInfo(seasonInfoList);
     };
@@ -54,7 +60,7 @@ const PlayTV = ({ mediaId }) => {
 
     if (match) {
       const newSeason = parseInt(match[0], 10);
-      setCurrSeason(newSeason - 1);
+      setCurrSeason(newSeason);
       setCurrEpisode(0);
     }
   };
@@ -72,11 +78,13 @@ const PlayTV = ({ mediaId }) => {
     return (
       <div className="seasonsHolder">
         {seasonInfo.map((elem) => {
-          const isActive = elem.season_number - 1 === currSeason;
+          console.log(elem);
 
-          return (
+          const isActive = elem.season_number === currSeason;
+
+          return elem.season_number != undefined ? (
             <div
-              className={`season ${isActive ? 'active' : ''}`}
+              className={`season ${isActive ? "active" : ""}`}
               id={`season${elem.season_number}`}
               style={{
                 backgroundImage:
@@ -88,6 +96,8 @@ const PlayTV = ({ mediaId }) => {
             >
               <span>{elem.name}</span>
             </div>
+          ) : (
+            <></>
           );
         })}
       </div>
@@ -96,7 +106,6 @@ const PlayTV = ({ mediaId }) => {
 
   const displayEpisodesForSeason = () => {
     const currSeasonInfo = seasonInfo[currSeason]["episodes"];
-    console.log(currSeasonInfo);
 
     return (
       <div className="episodeButtonsHolder">
@@ -117,10 +126,76 @@ const PlayTV = ({ mediaId }) => {
     );
   };
 
+  const displayEpisodeInformation = () => {
+    console.log(`Season: ${currSeason}, Episode ${currEpisode}`);
+    const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode];
+    console.log(episodeInfo.name);
+
+    return (
+      <div className="mediaDisplay">
+        <div className="imgAndRatings">
+          <img
+            src={`https://image.tmdb.org/t/p/original/${
+              episodeInfo.still_path ||
+              mediaInfo.poster_path ||
+              mediaInfo.backdrop_path
+            }`}
+            alt="media poster image"
+          />
+          <div className="ratings">
+            <span className="voteAverage">
+              {episodeInfo.vote_average.toFixed(1)}
+            </span>{" "}
+            / <span className="voteCount">{episodeInfo.vote_count} voted</span>
+          </div>
+        </div>
+
+        <div className="mediaInfoHolder">
+          <div className="title">
+            <strong>{episodeInfo.name}</strong>{" "}
+            <span>{mediaInfo.content_ratings.results[0].rating}</span>
+          </div>
+          <div className="overview">{episodeInfo.overview}</div>
+          <div className="group">
+            <div className="released">
+              <strong>Released: </strong>
+              {episodeInfo.air_date}
+            </div>
+            <div className="duration">
+              <strong>Duration: </strong>
+              {episodeInfo.runtime} min
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  function TvEpisodeEmbed({ mediaId, season, episode, lang = "en" }) {
+    const src = `https://vidsrc.xyz/embed/tv?tmdb=${mediaId}&season=${season}&episode=${episode}&ds_lang=${lang}`;
+
+    return (
+      <iframe
+        src={src}
+        allow="fullscreen"
+        title={`Episode ${season}-${episode}`}
+      />
+    );
+  }
+
+  // Example usage:
+
   return (
     seasonInfo && (
       <div className="landingPage">
+        <TvEpisodeEmbed
+          mediaId={mediaId}
+          season={currSeason}
+          episode={currEpisode}
+        />
+
         {displayLandingPage()}
+        {displayEpisodeInformation()}
         {displayEpisodesForSeason()}
       </div>
     )
