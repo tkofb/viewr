@@ -43,38 +43,65 @@
   cursor: pointer;
   max-width: 270px;
   display: flex;
-  justify-content: center;
-  align-content: center;
 
   img {
     width: 220px;
-    border-radius: 20px;
+    border-radius: 16px;
   }
 
   .text {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    align-items: center;
   }
 
   .title {
-    display: flex;
-    font-weight: 600;
     font-size: 20px;
+    font-weight: 700;
     max-width: 220px;
+    display: flex;
+    color: #222;
+    text-align: center;
   }
 
   .details {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    align-content: center;
+
     .mediaType,
     .year {
       border: 2px solid black;
       font-weight: 600;
       border-radius: 6px;
       padding: 5px;
+
+      font-size: 14px;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      color: #333;
     }
   }
 }
 
 .mediaCard:hover {
   background-color: bisque;
+}
+
+.mediaCard:hover,
+.emptyCard:hover {
+  transform: scale(1.03);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.mediaCard:hover.tiltLeft {
+  transform: rotate(-1.5deg);
+}
+
+.mediaCard:hover.tiltRight {
+  transform: rotate(1.5deg);
 }

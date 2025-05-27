@@ -3,6 +3,7 @@ import Home from "./pages/Home/Home.jsx";
 import MediaSearch from "./pages/MediaSearch/MediaSearch.jsx";
 import MediaInfo from "./pages/MediaInfo/MediaInfo.jsx";
 import PlayMedia from "./pages/PlayMedia/PlayMedia.jsx";
+import './index.css'
 
 export default function App() {
   return (

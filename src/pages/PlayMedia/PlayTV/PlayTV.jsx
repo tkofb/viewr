@@ -74,7 +74,7 @@ const PlayTV = ({ mediaId }) => {
     }
   };
 
-  const displayLandingPage = () => {
+  const displaySeasons = () => {
     return (
       <div className="seasonsHolder">
         {seasonInfo.map((elem) => {
@@ -82,7 +82,7 @@ const PlayTV = ({ mediaId }) => {
 
           const isActive = elem.season_number === currSeason;
 
-          return elem.season_number != undefined ? (
+          return elem.season_number != undefined && elem.season_number != 0 ? (
             <div
               className={`season ${isActive ? "active" : ""}`}
               id={`season${elem.season_number}`}
@@ -188,15 +188,22 @@ const PlayTV = ({ mediaId }) => {
   return (
     seasonInfo && (
       <div className="landingPage">
+        <div>
+          Season {currSeason} Episode {currEpisode}:{" "}
+          {seasonInfo[currSeason]["episodes"][currEpisode - 1].name}
+        </div>
         <TvEpisodeEmbed
           mediaId={mediaId}
           season={currSeason}
           episode={currEpisode}
         />
-
-        {displayLandingPage()}
         {displayEpisodeInformation()}
-        {displayEpisodesForSeason()}
+
+        <div className="seasonsAndEpisodes">
+          {displaySeasons()}
+          {displayEpisodesForSeason()}
+        </div>
+
       </div>
     )
   );

@@ -62,8 +62,6 @@ const Navbar = ({ sessionId }) => {
     const avatar_path = userInfo.avatar.tmdb.avatar_path;
     const img_path = `https://image.tmdb.org/t/p/original/${avatar_path}`;
 
-    if (avatar_path) {
-    }
 
     return (
       <>
@@ -79,7 +77,7 @@ const Navbar = ({ sessionId }) => {
             <div className="userName">{userInfo.username}</div>
           </div>
         </div>
-        <button onClick={logout}>logout</button>
+        <button onClick={logout}>LOGOUT</button>
       </>
     );
   };
@@ -90,7 +88,7 @@ const Navbar = ({ sessionId }) => {
       {loggedIn && userInfo ? (
         handleUserInfo()
       ) : (
-        <button onClick={handleSession}>login</button>
+        <button onClick={handleSession}>LOGIN</button>
       )}
     </nav>
   );

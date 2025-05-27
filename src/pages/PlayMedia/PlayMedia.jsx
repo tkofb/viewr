@@ -2,7 +2,7 @@ import React from "react";
 import "./PlayMedia.css";
 import { useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
-import PlayMovie from "./PlayMovie";
+import PlayMovie from "./PlayMovie/PlayMovie";
 import PlayTV from "./PlayTV/PlayTV";
 
 const PlayMedia = () => {

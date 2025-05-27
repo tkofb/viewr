@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
-import "./MovieInfo.css";
 import axios from "axios";
-import Recommendations from "../Recommendations/Recommendations";
-import playIcon from "../../assets/play.svg";
-import notAFavoriteIcon from "../../assets/notAFavorite.svg";
-import favoriteIcon from "../../assets/favorite.svg";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import notAFavoriteIcon from "../../../assets/notAFavorite.svg";
+import favoriteIcon from "../../../assets/favorite.svg";
+import playIcon from "../../../assets/play.svg";
+import "./PlayMovie.css";
 
-const MovieInfo = ({ mediaId }) => {
+const PlayMovie = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const sessionId = localStorage.getItem("sessionId");
   const [isFavorite, setIsFavorite] = useState(false);
-  const navigate = useNavigate()
 
   useEffect(() => {
     const getMovieInfo = async () => {
@@ -19,22 +16,23 @@ const MovieInfo = ({ mediaId }) => {
         mediaId: mediaId,
         sessionId: sessionId,
       });
-
-      console.log(response.data);
-      setIsFavorite(response.data.account_states.favorite);
       setMediaInfo(response.data);
+      setIsFavorite(response.data.account_states.favorite);
     };
 
     getMovieInfo();
   }, [mediaId]);
 
-  const extractNames = (lst, amt) => {
-    return lst
-      .slice(0, amt)
-      .reduce((accum, currValue) => accum + `${currValue.name}, `, "")
-      .slice(0, -2);
-  };
+  function MovieEmbed({ lang = "en" }) {
+    const src = `https://vidsrc.xyz/embed/movie?tmdb=${mediaId}&ds_lang=${lang}`;
 
+    return <iframe src={src} allow="fullscreen" />;
+  }
+
+  const getRatings = (releaseDatesWorldwide) => {
+    return releaseDatesWorldwide.find((elem) => elem.iso_3166_1 == "US")
+      .release_dates[0].certification;
+  };
   const hoverFavoriteEnter = (e) => {
     e.currentTarget.src = favoriteIcon;
   };
@@ -70,18 +68,16 @@ const MovieInfo = ({ mediaId }) => {
     toggleFavoriteMedia(mediaId, "movie");
   };
 
-  const getRatings = (releaseDatesWorldwide) => {
-    return releaseDatesWorldwide.find((elem) => elem.iso_3166_1 == "US")
-      .release_dates[0].certification;
+  const extractNames = (lst, amt) => {
+    return lst
+      .slice(0, amt)
+      .reduce((accum, currValue) => accum + `${currValue.name}, `, "")
+      .slice(0, -2);
   };
-
-  const playMedia = () => {
-    navigate(`/play/movie/${mediaId}`);
-  };
-
   return (
-    mediaInfo && (
-      <div className="landingPage">
+    <div className="landingPage">
+      <MovieEmbed mediaId={mediaId} />
+      {mediaInfo && (
         <div className="mediaDisplay">
           <div className="imgAndRatings">
             <img
@@ -99,7 +95,7 @@ const MovieInfo = ({ mediaId }) => {
           </div>
           <div className="mediaInfoHolder">
             <div className="buttons">
-              <button className="watch" onClick={playMedia}>
+              <button className="watch">
                 <img src={playIcon} alt="play icon" /> Watch
               </button>
 
@@ -150,13 +146,9 @@ const MovieInfo = ({ mediaId }) => {
             </div>
           </div>
         </div>
-        <Recommendations
-          recommendations={mediaInfo.recommendations.results}
-          amt={5}
-        />
-      </div>
-    )
+      )}
+    </div>
   );
 };
 
-export default MovieInfo;
+export default PlayMovie;

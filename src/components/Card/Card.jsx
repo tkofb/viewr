@@ -19,9 +19,11 @@ const Card = ({ mediaInfo }) => {
   };
 
   const handleMediaInfo = (info) => {
+    const randomTilt = Math.random() > 0.5 ? "tiltLeft" : "tiltRight";
+
     return (
       <div
-        className={`mediaCard ${info.title ? "movie" : "tv"}`}
+        className={`mediaCard ${info.title ? "movie" : "tv"} ${randomTilt}`}
         id={info.id}
         onClick={onClick}
       >
@@ -49,7 +51,7 @@ const Card = ({ mediaInfo }) => {
 
   const handleEmptyCard = () => {
     return (
-      <div className="emptyCard" onClick={addMedia}>
+      <div className="emptyCard tiltRight" onClick={addMedia}>
         <div className="mediaHolder">+</div>
       </div>
     );

@@ -11,7 +11,7 @@ const TVInfo = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const sessionId = localStorage.getItem("sessionId");
   const [isFavorite, setIsFavorite] = useState(false);
-  const navigate = useNavigate() 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getShowInfo = async () => {
@@ -19,6 +19,8 @@ const TVInfo = ({ mediaId }) => {
         mediaId: mediaId,
         sessionId: sessionId,
       });
+
+      console.log(response.data);
 
       setIsFavorite(response.data.account_states.favorite);
       setMediaInfo(response.data);
@@ -80,7 +82,7 @@ const TVInfo = ({ mediaId }) => {
   return (
     mediaInfo && (
       <div className="landingPage">
-        <div className='mediaDisplay'>
+        <div className="mediaDisplay">
           <div className="imgAndRatings">
             <img
               src={`https://image.tmdb.org/t/p/original/${
@@ -121,10 +123,12 @@ const TVInfo = ({ mediaId }) => {
                 <strong>Released: </strong>
                 {mediaInfo.first_air_date}
               </div>
-              <div className="duration">
-                <strong>Duration: </strong>
-                {mediaInfo.episode_run_time[0]} min
-              </div>
+              {mediaInfo.episode_run_time[0] && (
+                <div className="duration">
+                  <strong>Duration: </strong>
+                  {mediaInfo.episode_run_time[0]} min
+                </div>
+              )}
             </div>
             <div className="group">
               <div className="genre">

@@ -46,20 +46,12 @@
   z-index: 1;
 }
 
-.episodeButtonsHolder {
-  display: flex;
-  gap: 16px;
-  max-width: 700px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-}
-
 .episodeButton {
   background-color: aqua;
   padding: 10px 20px;
   border-radius: 10px;
   cursor: pointer;
+  height: 40px;
 }
 
 .episodeButton.active {
@@ -77,9 +69,51 @@
 iframe {
   border-radius: 20px;
   padding: 10px;
-  height: 560px;
-  width: 1000px;
-  /* width: 100%; */
+  height: 507px;
+  width: 900px;
   cursor: pointer;
 }
 
+/* .seasonsAndEpisodes {
+  display: flex;
+  width: 900px;
+
+
+  .episodeButtonsHolder {
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 16px;
+  }
+
+  .seasonsHolder {
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+} */
+
+.seasonsAndEpisodes {
+  display: flex;
+  flex-wrap: wrap;          /* Allow wrapping on smaller screens */
+  gap: 50px;                /* Gap between the two holders */
+  justify-content: center;  /* Center the group horizontally */
+  align-items: center;  /* Align items to the top */
+  padding: 16px;
+}
+
+/* Remove hard widths and let flex grow naturally */
+.episodeButtonsHolder,
+.seasonsHolder {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 450px;
+  align-items: center;
+  justify-content: center;
+}

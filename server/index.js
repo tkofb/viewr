@@ -20,14 +20,6 @@ app.use(function (req, res, next) {
 const PORT = 8080;
 const apiKey = process.env.API_KEY;
 
-const bearerOptions = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization: `Bearer ${process.env.API_READ_KEY}`,
-  },
-};
-
 app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
 });
