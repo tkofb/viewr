@@ -47,15 +47,34 @@
 }
 
 .episodeButton {
-  background-color: aqua;
+  background-color: #e0f7fa;
+  color: #004d40;
+  font-weight: 600;
   padding: 10px 20px;
   border-radius: 10px;
+  border: 3px solid #b2ebf2;
+
   cursor: pointer;
   height: 40px;
 }
 
+.episodeButton.notReleased {
+  background-color: #ffcdd2;
+  color: #b71c1c;
+  border: 3px dashed #ef9a9a; 
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
 .episodeButton.active {
-  background-color: aquamarine;
+  background-color: #a5d6a7;
+  color: #1b5e20;
+}
+
+.episodeButton:hover {
+  background-color: #81c784; /* Slightly deeper green */
+  border: 3px solid #388e3c; /* Complementary green border */
 }
 
 .season.active {
@@ -74,40 +93,15 @@ iframe {
   cursor: pointer;
 }
 
-/* .seasonsAndEpisodes {
-  display: flex;
-  width: 900px;
-
-
-  .episodeButtonsHolder {
-    width: 50%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    align-content: flex-start;
-    gap: 16px;
-  }
-
-  .seasonsHolder {
-    width: 50%;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
-} */
-
 .seasonsAndEpisodes {
   display: flex;
-  flex-wrap: wrap;          /* Allow wrapping on smaller screens */
-  gap: 50px;                /* Gap between the two holders */
-  justify-content: center;  /* Center the group horizontally */
-  align-items: center;  /* Align items to the top */
+  flex-wrap: wrap;
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
   padding: 16px;
 }
 
-/* Remove hard widths and let flex grow naturally */
 .episodeButtonsHolder,
 .seasonsHolder {
   display: flex;
@@ -116,4 +110,9 @@ iframe {
   max-width: 450px;
   align-items: center;
   justify-content: center;
+}
+
+.notReleasedLogo{
+  width: 250px;
+  height: 140px;
 }

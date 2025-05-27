@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./PlayTV.css";
+import notReleasedLogo from '../../../assets/notReleasedLogo.png'
 
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
@@ -30,6 +31,8 @@ const PlayTV = ({ mediaId }) => {
         seasonNumber: seasonNumber,
       });
 
+      console.log(response.data);
+
       return response.data;
     };
 
@@ -40,13 +43,11 @@ const PlayTV = ({ mediaId }) => {
           const seasonInfo = await getSeasonInfo(i);
           seasonInfoList.push(seasonInfo);
         } catch {
-          console.log(`Season ${i} Not Found`);
           seasonInfoList.push({ seasonNumber: i });
         }
       }
       seasonInfoList.sort((a, b) => a.season_number - b.season_number);
 
-      console.log(seasonInfoList);
       setSeasonInfo(seasonInfoList);
     };
 
@@ -78,8 +79,6 @@ const PlayTV = ({ mediaId }) => {
     return (
       <div className="seasonsHolder">
         {seasonInfo.map((elem) => {
-          console.log(elem);
-
           const isActive = elem.season_number === currSeason;
 
           return elem.season_number != undefined && elem.season_number != 0 ? (
@@ -105,16 +104,19 @@ const PlayTV = ({ mediaId }) => {
   };
 
   const displayEpisodesForSeason = () => {
-    const currSeasonInfo = seasonInfo[currSeason]["episodes"];
+    const currSeasonEpisodes = seasonInfo[currSeason]["episodes"];
 
     return (
       <div className="episodeButtonsHolder">
-        {currSeasonInfo.map((elem) => {
+        {currSeasonEpisodes.map((elem) => {
           const isActive = elem.episode_number === currEpisode;
+          const released = isReleased(elem.air_date);
 
           return (
             <button
-              className={`episodeButton ${isActive ? "active" : ""}`}
+              className={`episodeButton ${!released && "notReleased"} ${
+                isActive && "active"
+              } `}
               id={`episode${elem.episode_number}`}
               onClick={handleClickedEpisode}
             >
@@ -127,45 +129,73 @@ const PlayTV = ({ mediaId }) => {
   };
 
   const displayEpisodeInformation = () => {
-    console.log(`Season: ${currSeason}, Episode ${currEpisode}`);
     const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode - 1];
-    console.log(episodeInfo.name);
+    const released = isReleased(
+      seasonInfo[currSeason]["episodes"][currEpisode - 1].air_date
+    );
 
     return (
       <div className="mediaDisplay">
         <div className="imgAndRatings">
-          <img
-            src={`https://image.tmdb.org/t/p/original/${
-              episodeInfo.still_path ||
-              mediaInfo.poster_path ||
-              mediaInfo.backdrop_path
-            }`}
-            alt="media poster image"
-          />
-          <div className="ratings">
-            <span className="voteAverage">
-              {episodeInfo.vote_average.toFixed(1)}
-            </span>{" "}
-            / <span className="voteCount">{episodeInfo.vote_count} voted</span>
-          </div>
+          {released ? (
+            <>
+              <img
+                src={`https://image.tmdb.org/t/p/original/${
+                  episodeInfo.still_path ||
+                  mediaInfo.poster_path ||
+                  mediaInfo.backdrop_path
+                }`}
+                alt="media poster image"
+              />
+              <div className="ratings">
+                <span className="voteAverage">
+                  {episodeInfo.vote_average.toFixed(1)}
+                </span>{" "}
+                /{" "}
+                <span className="voteCount">
+                  {episodeInfo.vote_count} voted
+                </span>
+              </div>
+            </>
+          ) : (
+            <img className="notReleasedLogo" src={notReleasedLogo} alt="Not Released Logo" />
+          )}
         </div>
 
-        <div className="mediaInfoHolder">
+        <div className="mediaInfoHolder playTV">
           <div className="title">
             <strong>{episodeInfo.name}</strong>{" "}
             <span>{mediaInfo.content_ratings.results[0].rating}</span>
           </div>
-          <div className="overview">{episodeInfo.overview}</div>
-          <div className="group">
-            <div className="released">
-              <strong>Released: </strong>
-              {episodeInfo.air_date}
+
+          {episodeInfo.overview && (
+            <div className="overview">{episodeInfo.overview}</div>
+          )}
+
+          {(episodeInfo.runtime || episodeInfo.air_date) && (
+            <div className="group">
+              {episodeInfo.air_date && isReleased(episodeInfo.air_date) ? (
+                <div className="released">
+                  <strong>Released: </strong>
+                  {episodeInfo.air_date}
+                </div>
+              ) : (
+                episodeInfo.air_date != undefined && (
+                  <div className="released">
+                    <strong>Release Date: </strong>
+                    {episodeInfo.air_date}
+                  </div>
+                )
+              )}
+
+              {episodeInfo.runtime && (
+                <div className="duration">
+                  <strong>Duration: </strong>
+                  {episodeInfo.runtime} min
+                </div>
+              )}
             </div>
-            <div className="duration">
-              <strong>Duration: </strong>
-              {episodeInfo.runtime} min
-            </div>
-          </div>
+          )}
         </div>
       </div>
     );
@@ -183,27 +213,41 @@ const PlayTV = ({ mediaId }) => {
     );
   }
 
-  // Example usage:
+  const isReleased = (date) => {
+    if (!date) {
+      return false;
+    }
+
+    const releaseDate = new Date(date);
+    const today = new Date();
+
+    return releaseDate < today;
+  };
 
   return (
     seasonInfo && (
       <div className="landingPage">
-        <div>
-          Season {currSeason} Episode {currEpisode}:{" "}
-          {seasonInfo[currSeason]["episodes"][currEpisode - 1].name}
-        </div>
-        <TvEpisodeEmbed
-          mediaId={mediaId}
-          season={currSeason}
-          episode={currEpisode}
-        />
+        {isReleased(
+          seasonInfo[currSeason]["episodes"][currEpisode - 1].air_date
+        ) && (
+          <>
+            <div>
+              Season {currSeason} Episode {currEpisode}:{" "}
+              {seasonInfo[currSeason]["episodes"][currEpisode - 1].name}
+            </div>
+            <TvEpisodeEmbed
+              mediaId={mediaId}
+              season={currSeason}
+              episode={currEpisode}
+            />
+          </>
+        )}
         {displayEpisodeInformation()}
 
         <div className="seasonsAndEpisodes">
           {displaySeasons()}
           {displayEpisodesForSeason()}
         </div>
-
       </div>
     )
   );
