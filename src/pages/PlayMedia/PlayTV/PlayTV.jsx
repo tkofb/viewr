@@ -3,6 +3,7 @@ import axios from "axios";
 import "./PlayTV.css";
 import notReleasedLogo from "../../../assets/notReleasedLogo.png";
 
+
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const [seasonInfo, setSeasonInfo] = useState();
@@ -246,7 +247,6 @@ const PlayTV = ({ mediaId }) => {
     const handleClick = () => {
       setShowOverlay(false);
       setStartTime(new Date());
-      console.log("Iframe area clicked");
     };
 
     return (

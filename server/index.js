@@ -1,6 +1,7 @@
 import express from "express";
 import "dotenv/config";
 import axios from "axios";
+import { MongoClient, ServerApiVersion } from "mongodb";
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,66 @@ app.use(function (req, res, next) {
 
 const PORT = 8080;
 const apiKey = process.env.API_KEY;
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
+async function getWatchedEpisodesForShow(mediaId) {
+  try {
+    await client.connect();
+    const database = client.db("mediaTracker");
+    const collection = database.collection("watchedEpisodes");
+    const query = { mediaId };
+    const watchedEpisodes = await collection.findOne(query);
+
+    return watchedEpisodes;
+  } finally {
+    await client.close();
+  }
+}
+
+async function addToWatchedEpisodes(mediaId, season, episode) {
+  try {
+    await client.connect();
+    const database = client.db("mediaTracker");
+    const collection = database.collection("watchedEpisodes");
+    const query = { mediaId };
+    const watchedEpisodes = await collection.findOne(query);
+
+    if (watchedEpisodes !== null) {
+      const seasons = watchedEpisodes["seasons"];
+      const seasonList = seasons.find((elem) => elem.season == season);
+      if (seasonList) {
+        const episodes = seasonList["watchedEpisodes"];
+        episodes.push(episode);
+        const uniqueElements = [...new Set(episodes)];
+        seasonList["watchedEpisodes"] = uniqueElements;
+      } else {
+        seasons.push({ season: season, watchedEpisodes: [episode] })
+      }
+
+      await collection.updateOne({ mediaId }, { $set: { seasons: seasons } });
+    } else {
+      const schema = {
+        mediaId,
+        lastWatch: { episode, season },
+        seasons: [{ season: season, watchedEpisodes: [episode] }],
+      };
+      await collection.insertOne(schema);
+    }
+  } finally {
+    await client.close();
+  }
+}
+
+await addToWatchedEpisodes(1000, 1, 2);
+await addToWatchedEpisodes(1000, 1, 3);
+await addToWatchedEpisodes(1000, 2, 3);
 
 app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
@@ -76,7 +137,7 @@ app.get("/createSession", async (req, res) => {
 app.get("/approveSession", async (req, res) => {
   try {
     const url = `https://api.themoviedb.org/3/authentication/token/new?api_key=${apiKey}`;
-    const response = await axios.get(url)
+    const response = await axios.get(url);
     res.send(response.data);
   } catch (err) {
     res.status(500).send({ error: "Failed to create session" });
@@ -87,7 +148,7 @@ app.post("/getMovieInfo", async (req, res) => {
   try {
     const { sessionId, mediaId } = req.body;
     const url = `https://api.themoviedb.org/3/movie/${mediaId}?api_key=${apiKey}&session_id=${sessionId}&language=en-US&append_to_response=reviews,recommendations,credits,account_states,release_dates`;
-    const response = await axios.get(url)
+    const response = await axios.get(url);
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -99,7 +160,7 @@ app.post("/getShowInfo", async (req, res) => {
   try {
     const { sessionId, mediaId } = req.body;
     const url = `https://api.themoviedb.org/3/tv/${mediaId}?api_key=${apiKey}&session_id=${sessionId}&language=en-US&append_to_response=content_ratings,recommendations,aggregate_credits,account_states`;
-    const response = await axios.get(url)
+    const response = await axios.get(url);
     res.send(response.data);
   } catch (err) {
     console.error(err);
@@ -114,8 +175,8 @@ app.post("/searchMedia", async (req, res) => {
       query
     )}&include_adult=false&language=en-US&page=1`;
 
-    const response = await axios.get(url)
-    let data = response.data
+    const response = await axios.get(url);
+    let data = response.data;
     data = data.results.filter((elem) => elem.media_type != "person");
 
     // I want to ignore glitched searches that happen in certain cases
