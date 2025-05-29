@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./PlayTV.css";
-import notReleasedLogo from '../../../assets/notReleasedLogo.png'
+import notReleasedLogo from "../../../assets/notReleasedLogo.png";
 
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
@@ -30,8 +30,6 @@ const PlayTV = ({ mediaId }) => {
         mediaId: mediaId,
         seasonNumber: seasonNumber,
       });
-
-      console.log(response.data);
 
       return response.data;
     };
@@ -128,6 +126,29 @@ const PlayTV = ({ mediaId }) => {
     );
   };
 
+  const [startTime, setStartTime] = useState(null);
+
+  useEffect(() => {
+    const handleTimeDifference = () => {
+      if (seasonInfo && startTime) {
+        const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode - 1];
+        const released = isReleased(episodeInfo.air_date);
+
+        if (released) {
+          const currTime = new Date();
+          const seconds = (currTime.getTime() - startTime.getTime()) / 1000;
+          const episodeLength = episodeInfo.runtime * 60;
+          const progression = seconds / episodeLength;
+          console.log(progression);
+        }
+      }
+    };
+
+    const interval = setInterval(handleTimeDifference, 1000);
+
+    return () => clearInterval(interval);
+  }, [seasonInfo, startTime]);
+
   const displayEpisodeInformation = () => {
     const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode - 1];
     const released = isReleased(
@@ -158,7 +179,11 @@ const PlayTV = ({ mediaId }) => {
               </div>
             </>
           ) : (
-            <img className="notReleasedLogo" src={notReleasedLogo} alt="Not Released Logo" />
+            <img
+              className="notReleasedLogo"
+              src={notReleasedLogo}
+              alt="Not Released Logo"
+            />
           )}
         </div>
 
@@ -201,15 +226,40 @@ const PlayTV = ({ mediaId }) => {
     );
   };
 
-  function TvEpisodeEmbed({ mediaId, season, episode, lang = "en" }) {
+  const [showOverlay, setShowOverlay] = useState(true);
+
+  useEffect(() => {
+    setShowOverlay(true);
+    setStartTime(null);
+  }, [currEpisode, currSeason]);
+
+  function TvEpisodeEmbed({
+    mediaId,
+    showOverlay,
+    setShowOverlay,
+    season,
+    episode,
+    lang = "en",
+  }) {
     const src = `https://vidsrc.xyz/embed/tv?tmdb=${mediaId}&season=${season}&episode=${episode}&ds_lang=${lang}`;
 
+    const handleClick = () => {
+      setShowOverlay(false);
+      setStartTime(new Date());
+      console.log("Iframe area clicked");
+    };
+
     return (
-      <iframe
-        src={src}
-        allow="fullscreen"
-        title={`Episode ${season}-${episode}`}
-      />
+      <div
+        className="iframeHolder"
+      >
+        {showOverlay && <div onClick={handleClick} className="overlay" />}
+        <iframe
+          src={src}
+          allow="fullscreen"
+          title={`Episode ${season}-${episode}`}
+        />
+      </div>
     );
   }
 
@@ -239,6 +289,8 @@ const PlayTV = ({ mediaId }) => {
               mediaId={mediaId}
               season={currSeason}
               episode={currEpisode}
+              showOverlay={showOverlay}
+              setShowOverlay={setShowOverlay}
             />
           </>
         )}
