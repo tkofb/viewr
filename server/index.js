@@ -77,12 +77,19 @@ async function addToWatchedEpisodes(mediaId, season, episode) {
   }
 }
 
-await addToWatchedEpisodes(1000, 1, 2);
-await addToWatchedEpisodes(1000, 1, 3);
-await addToWatchedEpisodes(1000, 2, 3);
-
 app.listen(PORT, async () => {
   console.log("Server Listening On Port 8080");
+});
+
+app.post("/getWatchedEpisodes", async (req, res) => {
+  const response = await getWatchedEpisodesForShow(req.body.mediaId)
+  res.send(response);
+});
+
+app.post("/addToWatched", async (req, res) => {
+  const {mediaId, season, episode} = req.body
+  const response = await addToWatchedEpisodes(mediaId, season, episode)
+  res.send(response);
 });
 
 app.post("/getSeasonInfo", async (req, res) => {

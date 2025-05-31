@@ -3,7 +3,6 @@ import axios from "axios";
 import "./PlayTV.css";
 import notReleasedLogo from "../../../assets/notReleasedLogo.png";
 
-
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
   const [seasonInfo, setSeasonInfo] = useState();
@@ -54,6 +53,16 @@ const PlayTV = ({ mediaId }) => {
       assignIndexToSeason();
     }
   }, [mediaInfo]);
+
+  const addToWatched = async (season, episode) => {
+    const response = await axios.post(`http://localhost:8080/addToWatched`, {
+      mediaId,
+      season,
+      episode,
+    });
+
+    return response.data;
+  };
 
   const handleClickedSeason = (e) => {
     const match = e.currentTarget.id.match(/\d+/);
@@ -232,7 +241,8 @@ const PlayTV = ({ mediaId }) => {
   useEffect(() => {
     setShowOverlay(true);
     setStartTime(null);
-  }, [currEpisode, currSeason]);
+    addToWatched(currSeason, currEpisode)
+  }, [currSeason, currEpisode]);
 
   function TvEpisodeEmbed({
     mediaId,
@@ -250,9 +260,7 @@ const PlayTV = ({ mediaId }) => {
     };
 
     return (
-      <div
-        className="iframeHolder"
-      >
+      <div className="iframeHolder">
         {showOverlay && <div onClick={handleClick} className="overlay" />}
         <iframe
           src={src}
