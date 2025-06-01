@@ -8,6 +8,7 @@ const PlayTV = ({ mediaId }) => {
   const [seasonInfo, setSeasonInfo] = useState();
   const [currSeason, setCurrSeason] = useState(1);
   const [currEpisode, setCurrEpisode] = useState(1);
+  const [watchedEpsiodes, setWatchedEpisodes] = useState(null);
 
   const sessionId = localStorage.getItem("sessionId");
 
@@ -21,6 +22,16 @@ const PlayTV = ({ mediaId }) => {
       setMediaInfo(response.data);
     };
 
+    const getWatchedEpisodes = async () => {
+      const response = await axios.post(`http://localhost:8080/getWatchedEpisodes`, {
+        mediaId
+      });
+
+      console.log(response.data)
+      setWatchedEpisodes(response.data);
+    }
+
+    getWatchedEpisodes()
     getShowInfo();
   }, [mediaId]);
 
