@@ -21,59 +21,62 @@ app.use(function (req, res, next) {
 const PORT = 8080;
 const apiKey = process.env.API_KEY;
 const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
 
-async function getWatchedEpisodesForShow(mediaId) {
-  try {
+let client;
+let collection;
+
+async function connectToMongo() {
+  if (!client) {
+    client = new MongoClient(uri, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      },
+    });
     await client.connect();
-    const database = client.db("mediaTracker");
-    const collection = database.collection("watchedEpisodes");
-    const query = { mediaId };
-    const watchedEpisodes = await collection.findOne(query);
-
-    return watchedEpisodes;
-  } finally {
-    await client.close();
+    const db = client.db("mediaTracker");
+    collection = db.collection("watchedEpisodes");
   }
 }
 
+async function getWatchedEpisodesForShow(mediaId) {
+  await connectToMongo();
+  const database = client.db("mediaTracker");
+  const collection = database.collection("watchedEpisodes");
+  const query = { mediaId };
+  const watchedEpisodes = await collection.findOne(query);
+
+  return watchedEpisodes;
+}
+
 async function addToWatchedEpisodes(mediaId, season, episode) {
-  try {
-    await client.connect();
-    const database = client.db("mediaTracker");
-    const collection = database.collection("watchedEpisodes");
-    const query = { mediaId };
-    const watchedEpisodes = await collection.findOne(query);
+  await connectToMongo();
+  const database = client.db("mediaTracker");
+  const collection = database.collection("watchedEpisodes");
+  const query = { mediaId };
+  const watchedEpisodes = await collection.findOne(query);
 
-    if (watchedEpisodes !== null) {
-      const seasons = watchedEpisodes["seasons"];
-      const seasonList = seasons.find((elem) => elem.season == season);
-      if (seasonList) {
-        const episodes = seasonList["watchedEpisodes"];
-        episodes.push(episode);
-        const uniqueElements = [...new Set(episodes)];
-        seasonList["watchedEpisodes"] = uniqueElements;
-      } else {
-        seasons.push({ season: season, watchedEpisodes: [episode] })
-      }
-
-      await collection.updateOne({ mediaId }, { $set: { seasons: seasons } });
+  if (watchedEpisodes !== null) {
+    const seasons = watchedEpisodes["seasons"];
+    const seasonList = seasons.find((elem) => elem.season == season);
+    if (seasonList) {
+      const episodes = seasonList["watchedEpisodes"];
+      episodes.push(episode);
+      const uniqueElements = [...new Set(episodes)];
+      seasonList["watchedEpisodes"] = uniqueElements;
     } else {
-      const schema = {
-        mediaId,
-        lastWatch: { episode, season },
-        seasons: [{ season: season, watchedEpisodes: [episode] }],
-      };
-      await collection.insertOne(schema);
+      seasons.push({ season: season, watchedEpisodes: [episode] });
     }
-  } finally {
-    await client.close();
+
+    await collection.updateOne({ mediaId }, { $set: { seasons: seasons } });
+  } else {
+    const schema = {
+      mediaId,
+      lastWatch: { episode, season },
+      seasons: [{ season: season, watchedEpisodes: [episode] }],
+    };
+    await collection.insertOne(schema);
   }
 }
 
@@ -82,13 +85,13 @@ app.listen(PORT, async () => {
 });
 
 app.post("/getWatchedEpisodes", async (req, res) => {
-  const response = await getWatchedEpisodesForShow(req.body.mediaId)
+  const response = await getWatchedEpisodesForShow(req.body.mediaId);
   res.send(response);
 });
 
 app.post("/addToWatched", async (req, res) => {
-  const {mediaId, season, episode} = req.body
-  const response = await addToWatchedEpisodes(mediaId, season, episode)
+  const { mediaId, season, episode } = req.body;
+  const response = await addToWatchedEpisodes(mediaId, season, episode);
   res.send(response);
 });
 
