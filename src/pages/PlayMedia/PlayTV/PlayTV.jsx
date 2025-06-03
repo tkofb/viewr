@@ -9,6 +9,7 @@ const PlayTV = ({ mediaId }) => {
   const [currSeason, setCurrSeason] = useState(1);
   const [currEpisode, setCurrEpisode] = useState(1);
   const [watchedEpsiodes, setWatchedEpisodes] = useState(null);
+  const [lastWatched, setLastWatched] = useState(null);
 
   const sessionId = localStorage.getItem("sessionId");
 
@@ -23,15 +24,19 @@ const PlayTV = ({ mediaId }) => {
     };
 
     const getWatchedEpisodes = async () => {
-      const response = await axios.post(`http://localhost:8080/getWatchedEpisodes`, {
-        mediaId
-      });
+      const response = await axios.post(
+        `http://localhost:8080/getWatchedEpisodes`,
+        {
+          mediaId,
+        }
+      );
 
-      console.log(response.data)
-      setWatchedEpisodes(response.data);
-    }
+      setWatchedEpisodes(response.data.seasons);
+      setLastWatched(response.data.lastWatch);
+      console.log(response.data);
+    };
 
-    getWatchedEpisodes()
+    getWatchedEpisodes();
     getShowInfo();
   }, [mediaId]);
 
@@ -122,6 +127,21 @@ const PlayTV = ({ mediaId }) => {
     );
   };
 
+  const checkIfWatched = (episodeNumber, seasonNumber) => {
+    console.log(watchedEpsiodes);
+
+    watchedEpsiodes.forEach((seasonInfo) => {
+      if (
+        seasonInfo.season == seasonNumber &&
+        seasonInfo.watchedEpisodes.includes(episodeNumber)
+      ) {
+        return " watched";
+      }
+    });
+
+    return "";
+  };
+
   const displayEpisodesForSeason = () => {
     const currSeasonEpisodes = seasonInfo[currSeason]["episodes"];
 
@@ -130,12 +150,18 @@ const PlayTV = ({ mediaId }) => {
         {currSeasonEpisodes.map((elem) => {
           const isActive = elem.episode_number === currEpisode;
           const released = isReleased(elem.air_date);
+          const seasonNumber = elem.season_number;
+          const episodeNumber = elem.episode_number;
 
           return (
             <button
-              className={`episodeButton ${!released && "notReleased"} ${
-                isActive && "active"
-              } `}
+              className={`episodeButton${!released ? " notReleased" : ""}${
+                isActive ? " active" : ""
+              }${
+                watchedEpsiodes
+                  ? checkIfWatched(episodeNumber, seasonNumber)
+                  : ""
+              }`}
               id={`episode${elem.episode_number}`}
               onClick={handleClickedEpisode}
             >
@@ -252,7 +278,7 @@ const PlayTV = ({ mediaId }) => {
   useEffect(() => {
     setShowOverlay(true);
     setStartTime(null);
-    addToWatched(currSeason, currEpisode)
+    addToWatched(currSeason, currEpisode);
   }, [currSeason, currEpisode]);
 
   function TvEpisodeEmbed({
