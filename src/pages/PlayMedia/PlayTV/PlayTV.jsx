@@ -8,10 +8,28 @@ const PlayTV = ({ mediaId }) => {
   const [seasonInfo, setSeasonInfo] = useState();
   const [currSeason, setCurrSeason] = useState(1);
   const [currEpisode, setCurrEpisode] = useState(1);
-  const [watchedEpsiodes, setWatchedEpisodes] = useState(null);
-  const [lastWatched, setLastWatched] = useState(null);
+  const [watchedEpisodes, setWatchedEpisodes] = useState(null);
 
   const sessionId = localStorage.getItem("sessionId");
+
+  const getWatchedEpisodes = async (updateLastWatched) => {
+    const response = await axios.post(
+      `http://localhost:8080/getWatchedEpisodes`,
+      {
+        mediaId,
+      }
+    );
+
+    setWatchedEpisodes(response.data.seasons);
+
+    if (updateLastWatched) {
+      const lastWatched = response.data.lastWatch;
+      if (lastWatched) {
+        setCurrEpisode(lastWatched.episode);
+        setCurrSeason(lastWatched.season);
+      }
+    }
+  };
 
   useEffect(() => {
     const getShowInfo = async () => {
@@ -23,20 +41,7 @@ const PlayTV = ({ mediaId }) => {
       setMediaInfo(response.data);
     };
 
-    const getWatchedEpisodes = async () => {
-      const response = await axios.post(
-        `http://localhost:8080/getWatchedEpisodes`,
-        {
-          mediaId,
-        }
-      );
-
-      setWatchedEpisodes(response.data.seasons);
-      setLastWatched(response.data.lastWatch);
-      console.log(response.data);
-    };
-
-    getWatchedEpisodes();
+    getWatchedEpisodes(true);
     getShowInfo();
   }, [mediaId]);
 
@@ -128,16 +133,14 @@ const PlayTV = ({ mediaId }) => {
   };
 
   const checkIfWatched = (episodeNumber, seasonNumber) => {
-    console.log(watchedEpsiodes);
-
-    watchedEpsiodes.forEach((seasonInfo) => {
+    for (const seasonInfo of watchedEpisodes) {
       if (
         seasonInfo.season == seasonNumber &&
         seasonInfo.watchedEpisodes.includes(episodeNumber)
       ) {
         return " watched";
       }
-    });
+    }
 
     return "";
   };
@@ -155,13 +158,11 @@ const PlayTV = ({ mediaId }) => {
 
           return (
             <button
-              className={`episodeButton${!released ? " notReleased" : ""}${
-                isActive ? " active" : ""
-              }${
-                watchedEpsiodes
+              className={`episodeButton${
+                watchedEpisodes
                   ? checkIfWatched(episodeNumber, seasonNumber)
                   : ""
-              }`}
+              }${!released ? " notReleased" : ""}${isActive ? " active" : ""}`}
               id={`episode${elem.episode_number}`}
               onClick={handleClickedEpisode}
             >
@@ -174,6 +175,7 @@ const PlayTV = ({ mediaId }) => {
   };
 
   const [startTime, setStartTime] = useState(null);
+  const intervalId = useRef(null);
 
   useEffect(() => {
     const handleTimeDifference = () => {
@@ -186,12 +188,17 @@ const PlayTV = ({ mediaId }) => {
           const seconds = (currTime.getTime() - startTime.getTime()) / 1000;
           const episodeLength = episodeInfo.runtime * 60;
           const progression = seconds / episodeLength;
-          console.log(progression);
+
+          if (progression > 0.003) {
+            addToWatched(currSeason, currEpisode);
+            clearInterval(intervalId);
+          }
         }
       }
     };
 
     const interval = setInterval(handleTimeDifference, 1000);
+    intervalId.current = interval;
 
     return () => clearInterval(interval);
   }, [seasonInfo, startTime]);
@@ -276,9 +283,14 @@ const PlayTV = ({ mediaId }) => {
   const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
-    setShowOverlay(true);
-    setStartTime(null);
-    addToWatched(currSeason, currEpisode);
+    const handleEpisodeSwitch = async () => {
+      setShowOverlay(true);
+      setStartTime(null);
+      await getWatchedEpisodes(false);
+      intervalId.current = null;
+    };
+
+    handleEpisodeSwitch();
   }, [currSeason, currEpisode]);
 
   function TvEpisodeEmbed({

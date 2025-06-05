@@ -66,14 +66,33 @@
   opacity: 0.6;
 }
 
-.episodeButton.active {
-  background-color: #a5d6a7;
-  color: #1b5e20;
+.episodeButton.notReleased.active, .episodeButton.notReleased:hover {
+  background-color: #b71c1c;
+  color: #ffcdd2;
 }
 
-.episodeButton:hover {
-  background-color: #81c784; /* Slightly deeper green */
-  border: 3px solid #388e3c; /* Complementary green border */
+.episodeButton.watched:not(.notReleased) {
+  background-color: #e0e0e0;
+  color: #424242;
+  border-color: #bdbdbd;
+  opacity: 0.8;
+}
+
+.episodeButton.watched:hover:not(.notReleased),
+.episodeButton.watched.active:not(.notReleased) {
+  background-color: #bdbdbd;
+  border-color: #9e9e9e;
+}
+
+/* .episodeButton.active {
+  background-color: #a5d6a7;
+  color: #1b5e20;
+} */
+
+.episodeButton.active, .episodeButton:hover:not(.notReleased) {
+  background-color: #81c784;
+  color: #1b5e20;
+  border: 3px solid #388e3c;
 }
 
 .season.active {

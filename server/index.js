@@ -69,7 +69,10 @@ async function addToWatchedEpisodes(mediaId, season, episode) {
       seasons.push({ season: season, watchedEpisodes: [episode] });
     }
 
-    await collection.updateOne({ mediaId }, { $set: { seasons: seasons } });
+    await collection.updateOne(
+      { mediaId },
+      { $set: { seasons: seasons, lastWatch: { episode, season } } }
+    );
   } else {
     const schema = {
       mediaId,
