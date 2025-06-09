@@ -50,6 +50,31 @@ async function getWatchedEpisodesForShow(mediaId) {
   return watchedEpisodes;
 }
 
+async function removeFromWatchedEpisodes(mediaId, season, episode) {
+  await connectToMongo();
+  const database = client.db("mediaTracker");
+  const collection = database.collection("watchedEpisodes");
+  const query = { mediaId };
+  const watchedEpisodes = await collection.findOne(query);
+
+  if (watchedEpisodes !== null) {
+    const seasons = watchedEpisodes["seasons"];
+    const seasonList = seasons.find((elem) => elem.season == season);
+    if (seasonList) {
+      const episodes = seasonList["watchedEpisodes"];
+      const elements = new Set(episodes);
+      elements.delete(episode);
+      const uniqueElements = [...elements];
+      seasonList["watchedEpisodes"] = uniqueElements;
+    }
+
+    await collection.updateOne(
+      { mediaId },
+      { $set: { seasons: seasons, lastWatch: { episode, season } } }
+    );
+  }
+}
+
 async function addToWatchedEpisodes(mediaId, season, episode) {
   await connectToMongo();
   const database = client.db("mediaTracker");
@@ -95,6 +120,12 @@ app.post("/getWatchedEpisodes", async (req, res) => {
 app.post("/addToWatched", async (req, res) => {
   const { mediaId, season, episode } = req.body;
   const response = await addToWatchedEpisodes(mediaId, season, episode);
+  res.send(response);
+});
+
+app.post("/removeFromWatched", async (req, res) => {
+  const { mediaId, season, episode } = req.body;
+  const response = await removeFromWatchedEpisodes(mediaId, season, episode);
   res.send(response);
 });
 

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./PlayTV.css";
 import notReleasedLogo from "../../../assets/notReleasedLogo.png";
+import { Eye, Check, EyeOff } from "lucide-react";
 
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
@@ -21,13 +22,33 @@ const PlayTV = ({ mediaId }) => {
     );
 
     setWatchedEpisodes(response.data.seasons);
+    const lastWatched = response.data.lastWatch;
 
-    if (updateLastWatched) {
-      const lastWatched = response.data.lastWatch;
-      if (lastWatched) {
+    if (updateLastWatched && lastWatched) {
+      const mostRecentEpisode = findMostRecentEpisode(lastWatched.season);
+
+      if (lastWatched.episode + 1 <= mostRecentEpisode) {
+        setCurrEpisode(lastWatched.episode + 1);
+      } else {
         setCurrEpisode(lastWatched.episode);
-        setCurrSeason(lastWatched.season);
       }
+
+      setCurrSeason(lastWatched.season);
+    }
+  };
+
+  const findMostRecentEpisode = (seasonNumber) => {
+    if (seasonInfo) {
+      const episodes = seasonInfo[seasonNumber].episodes;
+      let lastEpisode = null;
+
+      episodes.forEach((element) => {
+        if (isReleased(element.air_date)) {
+          lastEpisode = element.episode_number;
+        }
+      });
+
+      return lastEpisode;
     }
   };
 
@@ -85,6 +106,19 @@ const PlayTV = ({ mediaId }) => {
     return response.data;
   };
 
+  const removeFromWatched = async (season, episode) => {
+    const response = await axios.post(
+      `http://localhost:8080/removeFromWatched`,
+      {
+        mediaId,
+        season,
+        episode,
+      }
+    );
+
+    return response.data;
+  };
+
   const handleClickedSeason = (e) => {
     const match = e.currentTarget.id.match(/\d+/);
 
@@ -133,15 +167,16 @@ const PlayTV = ({ mediaId }) => {
   };
 
   const checkIfWatched = (episodeNumber, seasonNumber) => {
-    for (const seasonInfo of watchedEpisodes) {
-      if (
-        seasonInfo.season == seasonNumber &&
-        seasonInfo.watchedEpisodes.includes(episodeNumber)
-      ) {
-        return " watched";
+    if (watchedEpisodes) {
+      for (const seasonInfo of watchedEpisodes) {
+        if (
+          seasonInfo.season == seasonNumber &&
+          seasonInfo.watchedEpisodes.includes(episodeNumber)
+        ) {
+          return " watched";
+        }
       }
     }
-
     return "";
   };
 
@@ -189,7 +224,7 @@ const PlayTV = ({ mediaId }) => {
           const episodeLength = episodeInfo.runtime * 60;
           const progression = seconds / episodeLength;
 
-          if (progression > 0.003) {
+          if (progression > 0.4) {
             addToWatched(currSeason, currEpisode);
             clearInterval(intervalId);
           }
@@ -197,6 +232,7 @@ const PlayTV = ({ mediaId }) => {
       }
     };
 
+    getWatchedEpisodes(true);
     const interval = setInterval(handleTimeDifference, 1000);
     intervalId.current = interval;
 
@@ -242,9 +278,31 @@ const PlayTV = ({ mediaId }) => {
         </div>
 
         <div className="mediaInfoHolder playTV">
-          <div className="title">
-            <strong>{episodeInfo.name}</strong>{" "}
-            <span>{mediaInfo.content_ratings.results[0].rating}</span>
+          <div className="titleAndOptions">
+            <div className="title">
+              <strong>{episodeInfo.name}</strong>{" "}
+              <span>{mediaInfo.content_ratings.results[0].rating}</span>
+            </div>
+
+            <div className="options">
+              {!released ? (
+                <></>
+              ) : checkIfWatched(currEpisode, currSeason) ? (
+                <Check
+                  onClick={async () => {
+                    await removeFromWatched(currSeason, currEpisode);
+                    await getWatchedEpisodes(false);
+                  }}
+                />
+              ) : (
+                <Eye
+                  onClick={async () => {
+                    await addToWatched(currSeason, currEpisode);
+                    await getWatchedEpisodes(true);
+                  }}
+                />
+              )}
+            </div>
           </div>
 
           {episodeInfo.overview && (
