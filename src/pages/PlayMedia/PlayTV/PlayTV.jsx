@@ -232,12 +232,16 @@ const PlayTV = ({ mediaId }) => {
       }
     };
 
-    getWatchedEpisodes(true);
     const interval = setInterval(handleTimeDifference, 1000);
     intervalId.current = interval;
 
     return () => clearInterval(interval);
   }, [seasonInfo, startTime]);
+
+  useEffect(() => {
+    getWatchedEpisodes(true);
+  }, [seasonInfo])
+  
 
   const displayEpisodeInformation = () => {
     const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode - 1];
