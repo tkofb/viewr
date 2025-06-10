@@ -47,7 +47,8 @@ const Navbar = ({ sessionId }) => {
         sessionId: sessionId,
       });
 
-      if (loggingOut.data.success) {
+
+      if (loggingOut.status == 200) {
         localStorage.removeItem("sessionId");
         setLoggedIn(false);
       } else {

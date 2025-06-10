@@ -153,6 +153,7 @@ app.post("/getFavoriteMovies", async (req, res) => {
 });
 
 app.post("/getFavoriteTV", async (req, res) => {
+  console.log(apiKey);
   const url = `https://api.themoviedb.org/3/account/${req.body.id}/favorite/tv?api_key=${apiKey}&session_id=${req.body.sessionId}`;
   const response = await axios.get(url);
   res.send(response.data);
@@ -165,10 +166,20 @@ app.post("/getAccountInfo", async (req, res) => {
 });
 
 app.post("/logout", async (req, res) => {
-  const url = `https://api.themoviedb.org/3/authentication/session?api_key=${apiKey}`;
-  const body = { session_id: req.body.sessionId };
-  const response = await axios.delete(url, body);
-  res.send(response.data);
+  const url = `https://api.themoviedb.org/3/authentication/session`
+  const options = {
+    method: "DELETE",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+      Authorization:
+        `Bearer ${process.env.API_READ_KEY}`
+    },
+    body: JSON.stringify({ session_id: req.body.sessionId })
+  };
+
+  const response = await fetch(url, options)
+  res.send(response);
 });
 
 app.get("/createSession", async (req, res) => {
