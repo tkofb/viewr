@@ -13,19 +13,33 @@
   border-radius: 20px;
   width: 700px;
   font-size: 15px;
+  font-weight: 600;
 }
 
 .inputAndHome {
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
 }
 
-.search img {
+.inputAndHome .homeIcon {
+  cursor: pointer;
+  transition: transform 0.2s;
   width: 100%;
   height: 100%;
+  min-width: 40px;
   max-width: 40px;
+}
+
+.search input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+.inputAndHome .homeIcon:hover {
+  transform: scale(1.1) rotate(-10deg);
 }
 
 .media.active {
@@ -34,10 +48,29 @@
   border: 3px solid black;
 }
 
+.media:hover {
+  transform: scale(1.05);
+  border-color: black;
+  cursor: pointer;
+}
+
 .media {
   display: flex;
   gap: 20px;
+  transition: all 0.2s ease-in-out;
   border: 3px solid transparent;
+  align-items: center;
+}
+
+.search input {
+  width: 500px;
+  max-width: 90vw;
+  padding: 20px 25px;
+  font-size: 16px;
+  border: 3px solid #ccc;
+  border-radius: 30px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
 }
 
 .media img {
@@ -52,7 +85,9 @@
   display: flex;
   gap: 20px;
 
-  .mediaType, .voteAverage, .releaseDate {
+  .mediaType,
+  .voteAverage,
+  .releaseDate {
     border: black 2px solid;
     border-radius: 10px;
     padding: 10px;
@@ -64,4 +99,16 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+.text h2 {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.text p {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
 }

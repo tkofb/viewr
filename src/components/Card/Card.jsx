@@ -1,6 +1,7 @@
 import "./Card.css";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import playIcon from "../../assets/play.svg";
 
 const Card = ({ mediaInfo }) => {
   let navigate = useNavigate();
@@ -10,12 +11,26 @@ const Card = ({ mediaInfo }) => {
   };
 
   const playMedia = (mediaId, isTV) => {
-    const media_type = isTV ? "tv" : "movie";
-    navigate(`/${media_type}/${mediaId}`);
+    const mediaType = isTV ? "tv" : "movie";
+    navigate(`/play/${mediaType}/${mediaId}`);
+  };
+
+  const showInfo = (mediaId, isTV) => {
+    const mediaType = isTV ? "tv" : "movie";
+    navigate(`/${mediaType}/${mediaId}`);
   };
 
   const onClick = (e) => {
-    playMedia(e.currentTarget.id, e.currentTarget.classList.contains("tv"));
+    if (!e.target.classList.contains("clickPlay")) {
+      showInfo(e.currentTarget.id, e.currentTarget.classList.contains("tv"));
+    }
+  };
+
+  const handleClick = (e) => {
+    console.log(e.target)
+    console.log(mediaInfo)
+    playMedia(mediaInfo.id, (mediaInfo.name != null));
+    console.log("click");
   };
 
   const handleMediaInfo = (info) => {
@@ -43,6 +58,9 @@ const Card = ({ mediaInfo }) => {
                 : info.first_air_date.substring(0, 4)}
             </div>
             <div className="mediaType">{info.name ? "TV" : "Movie"}</div>
+            <div className="clickPlay" onClick={handleClick}>
+              <img src={playIcon} alt="play icon" className="playIcon" /> Watch
+            </div>
           </div>
         </div>
       </div>

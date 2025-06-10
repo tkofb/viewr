@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./PlayTV.css";
 import notReleasedLogo from "../../../assets/notReleasedLogo.png";
-import { Eye, Check, EyeOff } from "lucide-react";
+import { Eye, Check } from "lucide-react";
+import notAFavoriteIcon from "../../../assets/notAFavorite.svg";
+import favoriteIcon from "../../../assets/favorite.svg";
 
 const PlayTV = ({ mediaId }) => {
   const [mediaInfo, setMediaInfo] = useState();
@@ -59,6 +61,7 @@ const PlayTV = ({ mediaId }) => {
         sessionId: sessionId,
       });
 
+      setIsFavorite(response.data.account_states.favorite);
       setMediaInfo(response.data);
     };
 
@@ -240,9 +243,44 @@ const PlayTV = ({ mediaId }) => {
 
   useEffect(() => {
     getWatchedEpisodes(true);
-  }, [seasonInfo])
-  
+  }, [seasonInfo]);
 
+  const hoverFavoriteEnter = (e) => {
+    e.currentTarget.src = favoriteIcon;
+  };
+
+  const hoverFavoriteLeave = (e) => {
+    if (!isFavorite) {
+      e.currentTarget.src = notAFavoriteIcon;
+    }
+  };
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const toggleFavoriteMedia = async (mediaId, mediaType) => {
+    const userInfo = await axios.post(`http://localhost:8080/getAccountInfo`, {
+      sessionId: sessionId,
+    });
+
+    const addToFavorites = await axios.post(
+      `http://localhost:8080/toggleFavoriteMedia`,
+      {
+        sessionId: sessionId,
+        mediaType: mediaType,
+        mediaId: mediaId,
+        userId: userInfo.data.id,
+        isFavorited: isFavorite,
+      }
+    );
+
+    if (addToFavorites.data.success) {
+      setIsFavorite(!isFavorite);
+    }
+  };
+
+  const onClick = (e) => {
+    toggleFavoriteMedia(mediaId, "tv");
+  };
   const displayEpisodeInformation = () => {
     const episodeInfo = seasonInfo[currSeason]["episodes"][currEpisode - 1];
     const released = isReleased(
@@ -293,6 +331,7 @@ const PlayTV = ({ mediaId }) => {
                 <></>
               ) : checkIfWatched(currEpisode, currSeason) ? (
                 <Check
+                  className="isWatched"
                   onClick={async () => {
                     await removeFromWatched(currSeason, currEpisode);
                     await getWatchedEpisodes(false);
@@ -300,12 +339,22 @@ const PlayTV = ({ mediaId }) => {
                 />
               ) : (
                 <Eye
+                  className="isWatched"
                   onClick={async () => {
                     await addToWatched(currSeason, currEpisode);
                     await getWatchedEpisodes(true);
                   }}
                 />
               )}
+
+              <img
+                className="favoriteIcon"
+                src={isFavorite ? favoriteIcon : notAFavoriteIcon}
+                alt="favorite icon"
+                onMouseEnter={hoverFavoriteEnter}
+                onMouseLeave={hoverFavoriteLeave}
+                onClick={onClick}
+              />
             </div>
           </div>
 

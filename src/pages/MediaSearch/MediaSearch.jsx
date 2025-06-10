@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./MediaSearch.css";
-import homeLogo from "../../assets/home.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Home } from "lucide-react";
 
 const MediaSearch = () => {
   const navigate = useNavigate();
@@ -18,8 +18,8 @@ const MediaSearch = () => {
   }, [mediaList]);
 
   const playMedia = (mediaId) => {
-    const media_type = mediaInfo.get(mediaId).name ? 'tv' : 'movie'
-    navigate(`/${media_type}/${mediaId}`)
+    const media_type = mediaInfo.get(mediaId).name ? "tv" : "movie";
+    navigate(`/${media_type}/${mediaId}`);
   };
 
   const handleTextChange = async (e) => {
@@ -29,9 +29,15 @@ const MediaSearch = () => {
         query: searchTerm,
       });
 
+      
+      console.log(searchTerm, response.data)
+
       setMediaList(response.data);
+    } else {
+      setMediaList([])
     }
   };
+
 
   const description = (desc) => {
     if (desc.length >= 540) {
@@ -54,7 +60,7 @@ const MediaSearch = () => {
   };
 
   const handleDate = (date) => {
-    if (null) {
+    if (!date) {
       return null;
     }
 
@@ -88,7 +94,9 @@ const MediaSearch = () => {
           <p>{description(media.overview)}</p>
           <div className="details">
             <div className="mediaType">{media.media_type.toUpperCase()}</div>
-            <div className="voteAverage">{media.vote_average.toFixed(1)}</div>
+            <div className="voteAverage">
+              ⭐ {media.vote_average.toFixed(1)}
+            </div>
             <div className="releaseDate">
               {handleDate(media.first_air_date || media.release_date)}
             </div>
@@ -98,12 +106,18 @@ const MediaSearch = () => {
     );
   };
 
+  useState()
+
   return (
     <div className="search">
       <div className="inputAndHome">
-        <input type="text" onKeyDown={handleTextChange} />
+        <input
+          type="text"
+          placeholder="search for a show or movie..."
+          onChange={handleTextChange}
+        />
         <a href="/">
-          <img src={homeLogo} alt="Home Logo" />
+          <Home className="homeIcon" strokeWidth={2.5} color="#777" />
         </a>
       </div>
       <div className="mediaList">

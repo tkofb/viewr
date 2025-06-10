@@ -72,7 +72,9 @@
     align-content: center;
 
     .mediaType,
-    .year {
+    .year,
+    .clickPlay {
+      display: flex;
       border: 2px solid black;
       font-weight: 600;
       border-radius: 6px;
@@ -83,6 +85,23 @@
       border-radius: 6px;
       padding: 4px 8px;
       color: #333;
+
+      align-items: center;
+      gap: 5px;
+
+      .playIcon {
+        width: 20px;
+      }
+    }
+
+    .clickPlay {
+      color: white;
+      background-color: #007bff;
+    }
+
+    .clickPlay:hover {
+      background-color: black;
+      background-color: #2160bc;
     }
   }
 }

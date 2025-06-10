@@ -94,23 +94,21 @@ const PlayMovie = ({ mediaId }) => {
             </div>
           </div>
           <div className="mediaInfoHolder">
-            <div className="buttons">
-              <button className="watch">
-                <img src={playIcon} alt="play icon" /> Watch
-              </button>
-
-              <img
-                className="favoriteIcon"
-                src={isFavorite ? favoriteIcon : notAFavoriteIcon}
-                alt="favorite icon"
-                onMouseEnter={hoverFavoriteEnter}
-                onMouseLeave={hoverFavoriteLeave}
-                onClick={onClick}
-              />
-            </div>
-            <div className="title">
-              <strong>{mediaInfo.title}</strong>{" "}
-              <span>{getRatings(mediaInfo.release_dates.results)}</span>
+            <div className="titleAndFavorites">
+              <div className="title">
+                <strong>{mediaInfo.title}</strong>{" "}
+                <span>{getRatings(mediaInfo.release_dates.results)}</span>
+              </div>
+              <div className="buttons">
+                <img
+                  className="favoriteIcon"
+                  src={isFavorite ? favoriteIcon : notAFavoriteIcon}
+                  alt="favorite icon"
+                  onMouseEnter={hoverFavoriteEnter}
+                  onMouseLeave={hoverFavoriteLeave}
+                  onClick={onClick}
+                />
+              </div>
             </div>
             <div className="overview">{mediaInfo.overview}</div>
             <div className="group">
