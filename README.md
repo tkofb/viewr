@@ -53,8 +53,8 @@ python spotty.py
 ```
 
 ## example step-through
-<!-- ![](./viewr.mp4) -->
-[watch demo video](https://github.com/tkofb/viewr/blob/winter/viewr.mp4)
+![](./viewr.gif)
+<!-- [watch demo video](https://github.com/tkofb/viewr/blob/winter/viewr.mp4) -->
 
 
 
