@@ -53,7 +53,9 @@ python spotty.py
 ```
 
 ## example step-through
-![](./viewr.mp4)
+<!-- ![](./viewr.mp4) -->
+[watch demo video](https://github.com/tkofb/viewr/raw/main/viewr.mp4)
+
 
 
 ## contributing
