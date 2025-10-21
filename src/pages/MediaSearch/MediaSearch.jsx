@@ -113,11 +113,11 @@ const MediaSearch = () => {
       <div className="inputAndHome">
         <input
           type="text"
-          placeholder="search for a show or movie..."
+          placeholder="What do you want to watch today?"
           onChange={handleTextChange}
         />
         <a href="/">
-          <Home className="homeIcon" strokeWidth={2.5} color="#777" />
+          <Home className="homeIcon" strokeWidth={2} color="black" />
         </a>
       </div>
       <div className="mediaList">
